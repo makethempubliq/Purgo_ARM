@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+    <title>Child</title>
+ 
+</head>
+<body>
+    <div class="container-fluid" id = "nav">
+        <h1>Hospital List</h1>
+       <table border="2" class="table table-striped" id = "example">
+           <thead>
+               <tr>
+                   <th>원장</th> <!--obj[0]-->
+                   <th>학교</th> <!--obj[1]-->
+                   <th>전공</th> <!--obj[2]-->
+                   <th>졸업년도</th> <!--obj[3]-->
+                   <th>담당자</th> <!--obj[4]-->
+                   <th>제품</th> <!--obj[6]-->
+                   <th>경쟁업체</th> <!--obj[7]-->
+                   <th>등급</th> <!--obj[5]-->
+                   <th>내용(최근)</th> <!--obj[8]-->
+                   <th>코드</th> <!--obj[10]-->
+               </tr>
+           </thead>
+           <tbody>
+           {% for obj in P_hospital %}
+               
+               <tr>
+                   <td>{{ obj[0] }}</td> 
+                   <td>{{ obj[1] }}</td>
+                   <td>{{ obj[2] }}</td>
+                   <td>{{ obj[3] }}</td>
+                   <td>{{ obj[4] }}</td>
+                   <td>{{ obj[6] }}</td>
+                   <td>{{ obj[7] }}</td>
+                   <td>{{ obj[5] }}</td>
+                   <td>{{ obj[8] }}</td>
+
+                   <td>{{ obj[10] }}</td>
+               </tr>
+              
+           {% endfor %}
+           </tbody>
+       </table>
+   </div>
+</body>
+</html>
