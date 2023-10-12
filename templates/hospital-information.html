@@ -406,36 +406,44 @@
     }
 </script>
     <script>
-    $(document).ready(function () {
-        var table = $('#example').DataTable();
+ $(document).ready(function () {
+    var table = $('#example').DataTable();
 
-        $('.filter-header[data-filter="kind"] .dropdown-item').click(function() {
-            var selectedKind = $(this).data('value');
-            $('.filter-header[data-filter="kind"] .dropdown-toggle').html($(this).text());
+    // 초기 상태에서 '구분'과 '지역' 필터를 모두 '전체'로 설정
+    var selectedKind = 'all';
+    var selectedRegion = 'all';
 
-            if (selectedKind === 'all') {
-                table.column(1).search('').draw();
-            } else {
-                table.column(1).search(selectedKind).draw();
-            }
-        });
+    // 초기 상태에서 필터 적용
+    applyFilters(table, selectedKind, selectedRegion);
 
-        $('.filter-header[data-filter="region"] .dropdown-item').click(function() {
-            var selectedRegion = $(this).data('value');
-            $('.filter-header[data-filter="region"] .dropdown-toggle').html($(this).text());
-
-            if (selectedRegion === 'all') {
-                table.column(2).search('').draw();
-            } else {
-                table.column(2).search(selectedRegion).draw();
-            }
-
-            var selectedKind = $('.filter-header[data-filter="kind"] .dropdown-toggle').text().trim();
-            if (selectedKind !== '전체') {
-                table.column(1).search(selectedKind).draw();
-            }
-        });
+    $('.filter-header[data-filter="kind"] .dropdown-item').click(function() {
+        selectedKind = $(this).data('value');
+        $('.filter-header[data-filter="kind"] .dropdown-toggle').html($(this).text());
+        applyFilters(table, selectedKind, selectedRegion);
     });
+
+    $('.filter-header[data-filter="region"] .dropdown-item').click(function() {
+        selectedRegion = $(this).data('value');
+        $('.filter-header[data-filter="region"] .dropdown-toggle').html($(this).text());
+        applyFilters(table, selectedKind, selectedRegion);
+    });
+});
+
+function applyFilters(table, selectedKind, selectedRegion) {
+    // 필터 적용 전, 기존 필터를 모두 제거
+    table.column(1).search('').draw();
+    table.column(2).search('').draw();
+
+    // '구분' 필터 적용
+    if (selectedKind !== 'all') {
+        table.column(1).search(selectedKind).draw();
+    }
+
+    // '지역' 필터 적용
+    if (selectedRegion !== 'all') {
+        table.column(2).search(selectedRegion).draw();
+    }
+}
 </script>
 
 
