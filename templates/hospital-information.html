@@ -374,18 +374,23 @@
     let rowIndex;
     let cellIndex;
 
+       <script type="text/javascript">
+    let openWin;
+    let rowIndex;
+    let cellIndex;
+
     function getIndex() {
         //window.open('/popup',"update","width=600, height=700, popup=yes")
         /*const rowIndex = event.target.parentNode.rowIndex;
         const cellIndex = event.target.cellIndex;
         alert(rowIndex)*/
 
-        $("#example tr").click(function() {
+         $("#example tbody tr").click(function() {
             var tr = $(this);
+            var td = tr.children();
 
-            // 첫 번째 행 (헤더)인 경우 팝업을 열지 않음
-            if (!tr.is(":first-child")) {
-                var td = tr.children();
+            // `thead` 부분의 첫 번째 행 (헤더)을 클릭한 경우 팝업을 열지 않음
+            if (!tr.is(":first-child") || !tr.closest("thead").length) {
                 var code = td.eq(4).text();
                 const s = JSON.stringify(code);
                 alert("클릭한 Row의 모든 데이터 : " + tr.text());
