@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <style>.hidden-col { display: none; }</style>
-    <title>Purgo - school </title>
+    <title>Purgo-hospital-information</title>
 
     <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link
@@ -73,13 +73,13 @@
 
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="progress-registration.html">
+                 <a class="nav-link collapsed" href="{{ url_for('progress_registration') }}">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>진행사항 등록</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="progress-confirmation.html">
+                <a class="nav-link" href="{{ url_for('progress_confirmation') }}">
                     <i class="fas fa-fw fa-folder"></i>
                     <span>진행사항 확인</span></a>
             </li>
@@ -265,21 +265,59 @@
 
                 </nav>
 
-                <div class="container-fluid" id = "nav">
-                     <h1>Hospital List</h1>
-                    <table border="2" class="table table-striped" id = "example">
+                <div class="container-fluid" id="nav">
+                    <h1 class="h3 mb-2 text-gray-800">Hospital List</h1>
+                    <table border="2" class="table table-striped" id="example">
                         <thead>
-                            <tr>
+                            <tr class ="table-primary">
                                 <th>병원명</th>
-                                <th>구분</th>
-                                <th>지역</th>
+                                <th class="filter-header" data-filter="kind">
+                                    <div class="dropdown">
+                                        <a class="dropdown-toggle" href="#" role="button" id="kindDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            구분
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="kindDropdown">
+                                            <a class="dropdown-item" href="#" data-value="all">전체</a>
+                                            <a class="dropdown-item" href="#" data-value="상급종합">상급종합</a>
+                                            <a class="dropdown-item" href="#" data-value="종합병원">종합병원</a>
+                                            <a class="dropdown-item" href="#" data-value="치과병원">치과병원</a>
+                                            <a class="dropdown-item" href="#" data-value="치과의원">치과의원</a>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th class="filter-header" data-filter="region">
+                                    <div class="dropdown">
+                                        <a class="dropdown-toggle" href="#" role="button" id="regionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            지역
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="regionDropdown">
+                                            <a class="dropdown-item" href="#" data-value="all">전체</a>
+                                            <a class="dropdown-item" href="#" data-value="강원특별자치도">강원특별자치도</a>
+                                            <a class="dropdown-item" href="#" data-value="서울특별시">서울특별시</a>
+                                            <a class="dropdown-item" href="#" data-value="인천광역시">인천광역시</a>
+                                            <a class="dropdown-item" href="#" data-value="대전광역시">대전광역시</a>
+                                            <a class="dropdown-item" href="#" data-value="대구광역시">대구광역시</a>
+                                            <a class="dropdown-item" href="#" data-value="광주광역시">광주광역시</a>
+                                            <a class="dropdown-item" href="#" data-value="울산광역시">울산광역시</a>
+                                            <a class="dropdown-item" href="#" data-value="부산광역시">부산광역시</a>
+                                            <a class="dropdown-item" href="#" data-value="경기도">경기도</a>
+                                            <a class="dropdown-item" href="#" data-value="충청남도">충청남도</a>
+                                            <a class="dropdown-item" href="#" data-value="충청북도">충청북도</a>
+                                            <a class="dropdown-item" href="#" data-value="전라남도">전라남도</a>
+                                            <a class="dropdown-item" href="#" data-value="전라북도">전라북도</a>
+                                            <a class="dropdown-item" href="#" data-value="경상북도">경상북도</a>
+                                            <a class="dropdown-item" href="#" data-value="경상남도">경상남도</a>
+                                            <a class="dropdown-item" href="#" data-value="세종특별자치시">세종특별자치시</a>
+                                            <a class="dropdown-item" href="#" data-value="제주특별자치도">제주특별자치도</a>
+                                        </div>
+                                    </div>
+                                </th>
                                 <th>원장</th>
                                 <th class="hidden-col">코드</th>
                             </tr>
                         </thead>
                         <tbody>
                         {% for obj in hospital %}
-                            
                             <tr>
                                 <td class="select" onclick="getIndex()" type="submit">{{ obj[0] }}</td>
                                 <td>{{ obj[1] }}</td>
@@ -287,14 +325,13 @@
                                 <td>{{ obj[3] }}</td>
                                 <td class="hidden-col">{{ obj[4] }}</td>
                             </tr>
-                           
                         {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
+            </div>
+            </div>
         </div>
 
-    </div>
 
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
@@ -320,65 +357,83 @@
         </div>
     </div>
 
+
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{ { url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/purgobio.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
 
     <script src="//code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="../static/js/app.js"></script>
-    
     <script type="text/javascript">
-        let openWin;
-        let rowIndex;
-        let cellIndex;
-       
+    let openWin;
+    let rowIndex;
+    let cellIndex;
 
-        function getIndex() 
-        {   
-            //window.open('/popup',"update","width=600, height=700, popup=yes")
-            
-            /*const rowIndex = event.target.parentNode.rowIndex;
-            const cellIndex = event.target.cellIndex;
-            alert(rowIndex)*/
+    function getIndex() {
+        //window.open('/popup',"update","width=600, height=700, popup=yes")
+        /*const rowIndex = event.target.parentNode.rowIndex;
+        const cellIndex = event.target.cellIndex;
+        alert(rowIndex)*/
 
-            $("#example tr").click(function() //클릭 항목의 index를 찾아 데이터를 꺼내온 후 post 전달 => start.py에서 수신
-            {     
-                var str = ""
-                var tdArr = new Array();    // 배열 선언
-                    
-                // 현재 클릭된 Row(<tr>)
-                var tr = $(this);
+        $("#example tr").click(function() {
+            var tr = $(this);
+
+            // 첫 번째 행 (헤더)인 경우 팝업을 열지 않음
+            if (!tr.is(":first-child")) {
                 var td = tr.children();
                 var code = td.eq(4).text();
-                
-                
                 const s = JSON.stringify(code);
-                alert("클릭한 Row의 모든 데이터 : "+tr.text());
+                alert("클릭한 Row의 모든 데이터 : " + tr.text());
                 $.ajax({
-                    url:"/test",
-                    type:"POST",
-                    contentType : "application/json",
-                    data : JSON.stringify(s)
+                    url: "/test",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(s)
                 });
-                window.open('/popup',"update","width=600, height=700, popup=yes")
-            });
-                // tr.text()는 클릭된 Row 즉 tr에 있는 모든 값을 가져온다.
-                //
-            
-            
-            
-            
-        }
-        
-        
-        
-       
-    </script>
-    
+                window.open('/popup', 'update', 'width=600, height=700, popup=yes');
+            }
+        });
+    }
+</script>
+    <script>
+    $(document).ready(function () {
+        var table = $('#example').DataTable();
+
+        $('.filter-header[data-filter="kind"] .dropdown-item').click(function() {
+            var selectedKind = $(this).data('value');
+            $('.filter-header[data-filter="kind"] .dropdown-toggle').html($(this).text());
+
+            if (selectedKind === 'all') {
+                table.column(1).search('').draw();
+            } else {
+                table.column(1).search(selectedKind).draw();
+            }
+        });
+
+        $('.filter-header[data-filter="region"] .dropdown-item').click(function() {
+            var selectedRegion = $(this).data('value');
+            $('.filter-header[data-filter="region"] .dropdown-toggle').html($(this).text());
+
+            if (selectedRegion === 'all') {
+                table.column(2).search('').draw();
+            } else {
+                table.column(2).search(selectedRegion).draw();
+            }
+
+            var selectedKind = $('.filter-header[data-filter="kind"] .dropdown-toggle').text().trim();
+            if (selectedKind !== '전체') {
+                table.column(1).search(selectedKind).draw();
+            }
+        });
+    });
+</script>
+
+
 </body>
 
 </html>
