@@ -1,0 +1,211 @@
+Metadata-Version: 2.1
+Name: aws-credentials
+Version: 1.0.0
+Summary: AWS credential manager
+Home-page: https://gitlab.com/perobertson/aws-credentials
+License: MIT
+Keywords: access,aws,credentials,iam,rotate
+Author: Paul Robertson
+Author-email: t.paulrobertson@gmail.com
+Requires-Python: >=3.6,<4.0
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Requires-Dist: boto3 (>=1.12.37,<2.0.0)
+Project-URL: Repository, https://gitlab.com/perobertson/aws-credentials
+Description-Content-Type: text/markdown
+
+# AWS Credentials
+
+This CLI tool will let you manage AWS IAM Credentials for a user.
+
+The main feature of this tool is the ability to rotate credentials.
+The process for this is:
+1. delete inactive credentials
+2. create a new set of credentials
+3. using the new set, it will deactivate the old one
+
+This process works because AWS has a maximum limit of two credentials.
+
+## Installing
+
+```bash
+pip install aws-credentials
+```
+
+## Usage
+
+`boto3` is used to interact with the AWS API, so the standard files can be used to specify the credentials.
+This includes the ability to use the environment variables
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_SESSION_TOKEN`
+
+You can also specify these as options on the individual commands.
+
+```
+⇒  aws-credentials --help
+usage: aws-credentials [-h]
+                       {activate,create,deactivate,delete,list,rotate} ...
+
+Utility for managing AWS access keys.
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Commands:
+  {activate,create,deactivate,delete,list,rotate}
+    activate            Activate a specific access key.
+    create              Create a new access key.
+    deactivate          Deactivate a specific access key.
+    delete              Delete a specific access key.
+    list                List access keys.
+    rotate              Rotate AWS credentials.
+```
+
+**activate**
+```
+⇒  aws-credentials activate --help
+usage: aws-credentials activate [-h] [-v]
+                                [--aws-access-key-id AWS_ACCESS_KEY_ID]
+                                [--aws-secret-access-key AWS_SECRET_ACCESS_KEY]
+                                [--aws-session-token AWS_SESSION_TOKEN]
+                                access_key_id
+
+Activate a specific access key.
+
+positional arguments:
+  access_key_id         id of the key to activate.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase the verbosity of messages. "-v" for normal
+                        output, and "-vv" for more verbose output.
+  --aws-access-key-id AWS_ACCESS_KEY_ID
+                        AWS_ACCESS_KEY_ID to use.
+  --aws-secret-access-key AWS_SECRET_ACCESS_KEY
+                        AWS_SECRET_ACCESS_KEY to use.
+  --aws-session-token AWS_SESSION_TOKEN
+                        AWS_SESSION_TOKEN to use.
+```
+
+**create**
+```
+⇒  aws-credentials create --help
+usage: aws-credentials create [-h] [-v]
+                              [--aws-access-key-id AWS_ACCESS_KEY_ID]
+                              [--aws-secret-access-key AWS_SECRET_ACCESS_KEY]
+                              [--aws-session-token AWS_SESSION_TOKEN]
+
+Create a new access key.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase the verbosity of messages. "-v" for normal
+                        output, and "-vv" for more verbose output.
+  --aws-access-key-id AWS_ACCESS_KEY_ID
+                        AWS_ACCESS_KEY_ID to use.
+  --aws-secret-access-key AWS_SECRET_ACCESS_KEY
+                        AWS_SECRET_ACCESS_KEY to use.
+  --aws-session-token AWS_SESSION_TOKEN
+                        AWS_SESSION_TOKEN to use.
+```
+
+**deactivate**
+```
+⇒  aws-credentials deactivate --help
+usage: aws-credentials deactivate [-h] [-v]
+                                  [--aws-access-key-id AWS_ACCESS_KEY_ID]
+                                  [--aws-secret-access-key AWS_SECRET_ACCESS_KEY]
+                                  [--aws-session-token AWS_SESSION_TOKEN]
+                                  access_key_id
+
+Deactivate a specific access key.
+
+positional arguments:
+  access_key_id         id of the key to deactivate.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase the verbosity of messages. "-v" for normal
+                        output, and "-vv" for more verbose output.
+  --aws-access-key-id AWS_ACCESS_KEY_ID
+                        AWS_ACCESS_KEY_ID to use.
+  --aws-secret-access-key AWS_SECRET_ACCESS_KEY
+                        AWS_SECRET_ACCESS_KEY to use.
+  --aws-session-token AWS_SESSION_TOKEN
+                        AWS_SESSION_TOKEN to use.
+```
+
+**delete**
+```
+⇒  aws-credentials delete --help
+usage: aws-credentials delete [-h] [-v]
+                              [--aws-access-key-id AWS_ACCESS_KEY_ID]
+                              [--aws-secret-access-key AWS_SECRET_ACCESS_KEY]
+                              [--aws-session-token AWS_SESSION_TOKEN]
+                              access_key_id
+
+Delete a specific access key.
+
+positional arguments:
+  access_key_id         id of the key to delete.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase the verbosity of messages. "-v" for normal
+                        output, and "-vv" for more verbose output.
+  --aws-access-key-id AWS_ACCESS_KEY_ID
+                        AWS_ACCESS_KEY_ID to use.
+  --aws-secret-access-key AWS_SECRET_ACCESS_KEY
+                        AWS_SECRET_ACCESS_KEY to use.
+  --aws-session-token AWS_SESSION_TOKEN
+                        AWS_SESSION_TOKEN to use.
+```
+
+**list**
+```
+⇒  aws-credentials list --help
+usage: aws-credentials list [-h] [-v] [--aws-access-key-id AWS_ACCESS_KEY_ID]
+                            [--aws-secret-access-key AWS_SECRET_ACCESS_KEY]
+                            [--aws-session-token AWS_SESSION_TOKEN]
+
+List access keys.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase the verbosity of messages. "-v" for normal
+                        output, and "-vv" for more verbose output.
+  --aws-access-key-id AWS_ACCESS_KEY_ID
+                        AWS_ACCESS_KEY_ID to use.
+  --aws-secret-access-key AWS_SECRET_ACCESS_KEY
+                        AWS_SECRET_ACCESS_KEY to use.
+  --aws-session-token AWS_SESSION_TOKEN
+                        AWS_SESSION_TOKEN to use.
+```
+
+**rotate**
+```
+⇒  aws-credentials rotate --help
+usage: aws-credentials rotate [-h] [-v]
+                              [--aws-access-key-id AWS_ACCESS_KEY_ID]
+                              [--aws-secret-access-key AWS_SECRET_ACCESS_KEY]
+                              [--aws-session-token AWS_SESSION_TOKEN]
+
+Rotate AWS credentials. This will delete inactive keys before creating the new
+key. It will then deactivate the old key.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase the verbosity of messages. "-v" for normal
+                        output, and "-vv" for more verbose output.
+  --aws-access-key-id AWS_ACCESS_KEY_ID
+                        AWS_ACCESS_KEY_ID to use.
+  --aws-secret-access-key AWS_SECRET_ACCESS_KEY
+                        AWS_SECRET_ACCESS_KEY to use.
+  --aws-session-token AWS_SESSION_TOKEN
+                        AWS_SESSION_TOKEN to use.
+```
+
