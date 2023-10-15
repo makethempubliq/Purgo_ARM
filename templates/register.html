@@ -31,41 +31,36 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
-                            <form class="user">
+                            <form method="POST" class="user">
+                                {{ form.csrf_token }}
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                            placeholder="First Name">
+                                        <label for="username">사용자 이름</label>
+                                        <input type="text" class="form-control" name="username" id="username"
+                                               value="{{ form.username.data or '' }}">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Last Name">
+                                        <label for="password1">비밀번호</label>
+                                        <input type="password" class="form-control" name="password1" id="password1"
+                                               value="{{ form.password1.data or '' }}">
+                                    </div>
+                                    <div class="col=sm-6">
+                                        <label for="password2">비밀번호 확인</label>
+                                        <input type="password" class="form-control" name="password2" id="password2"
+                                               value="{{ form.password2.data or '' }}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Email Address">
+                                    <label for="email">이메일</label>
+                                    <input type="text" class="form-control" name="email" id="email"
+                                           value="{{ form.email.data or '' }}">
                                 </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Repeat Password">
-                                    </div>
+                                <div class="form-group">
+                                    <label for="dept">부서</label>
+                                    <input type="text" class="form-control" name="dept" id="dept"
+                                           value="{{ form.dept.data or '' }}">
                                 </div>
-                                <a href="/" class="btn btn-primary btn-user btn-block">
-                                    Register Account
-                                </a>
-                                <hr>
-                                <a href="/" class="btn btn-google btn-user btn-block">
-                                    <i class="fab fa-google fa-fw"></i> Register with Google
-                                </a>
-                                <a href="/" class="btn btn-facebook btn-user btn-block">
-                                    <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                                </a>
+                                <button type="submit" class="btn btn-primary">Register Account</button>
                             </form>
                             <hr>
                             <div class="text-center">

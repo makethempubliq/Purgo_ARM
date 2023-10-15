@@ -1,9 +1,26 @@
-from flask import Flask, render_template,request,g,redirect,url_for
-from information import getinform, Hinform_Upadate, set_code,getPinform
+from flask import Flask, render_template, request, redirect, url_for, flash
 import pymysql
+from werkzeug.security import generate_password_hash
+from werkzeug.utils import redirect
+
+
+from loginregister import UserCreateForm
+from information import getinform, set_code, getPinform
+
+
+import config
+
+
+db = pymysql.connect(
+    host='purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com',
+    user='armteam',
+    passwd='purgo1234',
+    db='purgo_ARM_DB',
+    charset='utf8'
+)
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
-
+app.config.from_object(config)
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -59,22 +76,42 @@ def login():
 def forgot_password():
     return render_template('forgot-password.html')
 
-@app.route('/register.html')
+@app.route('/register.html', methods=('GET', 'POST'))
 def register():
-    return render_template('register.html')
+    form = UserCreateForm()
+    cursor = db.cursor()
+    if request.method == 'POST' and form.validate_on_submit():
+        cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
+        user = cursor.fetchall()
+        data_list = []
+        for obj in user:
+            data_list.append(obj)
+        if form.email.data not in data_list:
+            username=form.username.data
+            password=generate_password_hash(form.password1.data)
+            email=form.email.data
+            dept=form.dept.data
+            sql = f"insert into master_User(user_Name, user_Password, user_Email, user_Dept) values(\'{username}\', \'{password}\', \'{email}\', \'{dept}\')"
+            cursor.execute(sql)
+            db.commit()
+            return redirect(url_for('index'))
+        else:
+            flash('이미 존재하는 사용자입니다.')
+    return render_template('register.html', form=form)
+
 
 @app.route('/popup')
 def popup_function():
-    
     return render_template('popup.html',P_hospital=getPinform())
+
 
 @app.route('/test', methods=['POST'])
 def test():
     output = request.get_json()
-    
+
     set_code(output)
     return ('', 204)
-   
+
 
 if __name__ == '__main__':
     app.run(debug=True)
