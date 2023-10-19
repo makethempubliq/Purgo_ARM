@@ -12,9 +12,16 @@ code = ''
 
 @dataclass
 class masters:
-
+    
     Rank:List[str] = field(default_factory=list)
     Details:List[str] = field(default_factory=list)
+    Hdirect:List[str] = field(default_factory=list)
+    sql5:List[str] = field(default_factory=list)
+    sql6:List[str] = field(default_factory=list)
+    sql7:List[str] = field(default_factory=list)
+    sql8:List[str] = field(default_factory=list)
+    sql9:List[str] = field(default_factory=list)
+    sql10:List[str] = field(default_factory=list)
     college:List[str] = field(default_factory=list)
     Major:List[str] = field(default_factory=list)
     Product:List[str] = field(default_factory=list)
@@ -35,8 +42,15 @@ cursor = db.cursor()
 
 def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 가져와 초기화 시킨 후 객체변수를 리턴하는 함수
 
-    sql2 = "select hospital_Rank from hospital_Detail where ykiho = " + code
-    sql3 = "select meeting_Detail from hospital_Detail where ykiho = " + code
+    sql2 = "select hospital_Rank from hospital_Detail where ykiho = " + code          #랭크
+    sql3 = "select meeting_Detail from hospital_Detail where ykiho = " + code         #내용(최근)
+    sql4 = "select hospital_Director from hospital_Detail where ykiho = " + code      #병원장(불러오기)
+    sql5 = "select director_College from hospital_Detail where ykiho = " + code       #대학(불러오기)
+    sql6 = "select director_Major from hospital_Detail where ykiho = " + code         #전공(불러오기)
+    sql7 = "select director_GraduateYear from hospital_Detail where ykiho = " + code  #졸업년도(불러오기)
+    sql8 = "select hospital_manager from hospital_Detail where ykiho = " + code       #담당자(불러오기)
+    sql9 = "select hospital_Product from hospital_Detail where ykiho = " + code       #제품(불러오기)
+    sql10= "select hospital_competitor from hospital_Detail where ykiho = " + code    #경쟁업체(불러오기)
     coll_s = "select * from master_College"
     maj_s = "select * from master_Major"
     pro_s = "select * from master_Product"
@@ -44,6 +58,13 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
 
     dlist_r = []
     dlist_detail = []
+    dlist_Hdirect = []
+    dlist_sql5=[]
+    dlist_sql6=[]
+    dlist_sql7=[]
+    dlist_sql8=[]
+    dlist_sql9=[]
+    dlist_sql10=[]
     dlist_col = []
     dlist_maj = []
     dlist_pro = []
@@ -62,6 +83,49 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     for obj in sql3_p:
         dlist_detail.append(obj)
 
+    cursor.execute(sql4)
+    sql4_p = cursor.fetchall()
+
+    for obj in sql4_p:
+        dlist_Hdirect.append(obj)
+
+    cursor.execute(sql5)
+    sql5_p = cursor.fetchall()
+
+    for obj in sql5_p:
+        dlist_sql5.append(obj)
+
+    cursor.execute(sql6)
+    sql6_p = cursor.fetchall()
+
+    for obj in sql6_p:
+        dlist_sql6.append(obj)
+
+    cursor.execute(sql7)
+    sql7_p = cursor.fetchall()
+
+    for obj in sql7_p:
+        dlist_sql7.append(obj)
+
+    cursor.execute(sql8)
+    sql8_p = cursor.fetchall()
+
+    for obj in sql8_p:
+        dlist_sql8.append(obj)
+
+    cursor.execute(sql9)
+    sql9_p = cursor.fetchall()
+
+    for obj in sql9_p:
+        dlist_sql9.append(obj)
+
+    cursor.execute(sql10)
+    sql10_p = cursor.fetchall()
+
+    for obj in sql10_p:
+        dlist_sql10.append(obj)
+
+#=======================================================sql(n)
     cursor.execute(coll_s)
     coll_P = cursor.fetchall()
     
@@ -86,7 +150,9 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     for obj in com_P:
         dlist_com.append(obj)
   
-    Masters  = masters(Rank = dlist_r, Details = dlist_detail, college = dlist_col, Major=dlist_maj, Product=dlist_pro, Competitor=dlist_com)
+    Masters  = masters(Rank = dlist_r, Details = dlist_detail, Hdirect = dlist_Hdirect, sql5 = dlist_sql5, sql6 = dlist_sql6,sql7= dlist_sql7,
+                       sql8 = dlist_sql8 , sql9= dlist_sql9, sql10 = dlist_sql10,        
+                       college = dlist_col, Major=dlist_maj, Product=dlist_pro, Competitor=dlist_com)
 
     return Masters
 
