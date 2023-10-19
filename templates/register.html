@@ -20,9 +20,7 @@
 </head>
 
 <body class="bg-gradient-primary">
-
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <div class="row">
@@ -31,34 +29,30 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
+
                             <form method="POST" class="user">
                                 {{ form.csrf_token }}
+                                <div class="form-group">
+                                    <label for="username">사용자 이름</label>
+                                    <input type="text" class="form-control form-control-user" name="username" id="username" value="{{ form.username.data or '' }}">
+                                </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <label for="username">사용자 이름</label>
-                                        <input type="text" class="form-control" name="username" id="username"
-                                               value="{{ form.username.data or '' }}">
-                                    </div>
                                     <div class="col-sm-6">
                                         <label for="password1">비밀번호</label>
-                                        <input type="password" class="form-control" name="password1" id="password1"
-                                               value="{{ form.password1.data or '' }}">
+                                        <input type="password" class="form-control form-control-user" name="password1" id="password1" value="{{ form.password1.data or '' }}">
                                     </div>
-                                    <div class="col=sm-6">
+                                    <div class="col-sm-6">
                                         <label for="password2">비밀번호 확인</label>
-                                        <input type="password" class="form-control" name="password2" id="password2"
-                                               value="{{ form.password2.data or '' }}">
+                                        <input type="password" class="form-control form-control-user" name="password2" id="password2" value="{{ form.password2.data or '' }}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="email">이메일</label>
-                                    <input type="text" class="form-control" name="email" id="email"
-                                           value="{{ form.email.data or '' }}">
+                                    <input type="text" class="form-control form-control-user" name="email" id="email" value="{{ form.email.data or '' }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="dept">부서</label>
-                                    <input type="text" class="form-control" name="dept" id="dept"
-                                           value="{{ form.dept.data or '' }}">
+                                    <input type="text" class="form-control form-control-user" name="dept" id="dept" value="{{ form.dept.data or '' }}">
                                 </div>
                                 <button type="submit" class="btn btn-primary">Register Account</button>
                             </form>
@@ -74,7 +68,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
