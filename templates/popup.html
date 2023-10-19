@@ -39,7 +39,7 @@
     <tbody>
             <tr>
                 <th>원장</th>   
-                <td><input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center;" value="none">
+                <td><input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center;" value="{{ P_hospital.Hdirect[0] }}">
                 </td>
             </tr>
             <tr>
@@ -47,7 +47,7 @@
                 <td>
                     
                     <select name="languages" id="lang">
-                            <option value="Select a College">Select a College</option>
+                            <option value="{{ P_hospital.sql5[0] }}">{{ P_hospital.sql5[0] }}</option>
                         {%for obj in P_hospital.college%}
                             <option value="{{obj[1]}}">{{obj[1]}}</option>
                         {% endfor %}
@@ -58,7 +58,7 @@
             <tr>
                 <th>전공</th>
                 <td><select name="languages" id="lang">
-                    <option value="select">Select a Major</option>
+                    <option value="{{ P_hospital.sql6[0] }}">{{ P_hospital.sql6[0] }}</option>
                 {%for obj in P_hospital.Major%}
                     <option value="{{obj[1]}}">{{obj[1]}}</option>
                 {% endfor %}
@@ -67,13 +67,13 @@
             </tr>
             <tr>
                 <th>졸업년도</th>
-                <td><input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center;" value="none">
+                <td><input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center;" value="{{ P_hospital.sql7[0] }}">
                 </td>
             </tr>
             <tr>
                 <th>담당자</th>
                 <td><select name="languages" id="lang">
-                    <option value="select">Select a User</option>
+                    <option value="{{ P_hospital.sql8[0] }}">{{ P_hospital.sql8[0] }}</option>
                     <option value="javascript">JavaScript</option>
                     <option value="php">PHP</option>
                     <option value="java">Java</option>
@@ -88,7 +88,7 @@
             <tr>
                 <th>제품</th>
                 <td><select name="languages" id="lang">
-                    <option value="select">Select a Product</option>
+                    <option value="{{ P_hospital.sql5[9] }}">{{ P_hospital.sql9[0] }}</option>
                 {%for obj in P_hospital.Product%}
                     <option value="{{obj[1]}}">{{obj[1]}}</option>
                 {% endfor %}
@@ -98,7 +98,7 @@
             <tr>
                 <th>경쟁업체</th>
                 <td><select name="languages" id="lang">
-                    <option value="select">Select a Competitor</option>
+                    <option value="{{ P_hospital.sql10[0] }}">{{ P_hospital.sql10[0] }}</option>
                 {%for obj in P_hospital.Competitor%}
                     <option value="{{obj[1]}}">{{obj[1]}}</option>
                 {% endfor %}
