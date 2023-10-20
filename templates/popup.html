@@ -35,12 +35,18 @@
             </h1>
     <thead>
         <tr>
-            <th class="table table-primary">병원명</th>
-            <th class="table table-primary">수정불가</th>
+            <th class="table table-primary">제목</th>
+            <th class="table table-primary">내용</th>
         </tr>
     </thead>
 
     <tbody>
+            <tr>
+                <th>병원명</th>
+                <td>
+                    <input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center; background-color: transparent;" value="{{ P_hospital.Hname[0] }}">
+                </td>
+            </tr>
             <tr>
                 <th>원장</th>
                 <td>
@@ -71,7 +77,7 @@
         </tr>
             <tr>
                 <th>졸업년도</th>
-                <td><input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center;" value="{{ P_hospital.sql7[0] }}">
+                <td><input type="text" name="text" size="20" style="width:100%; border: 0; text-align: center; background-color: transparent;" value="{{ P_hospital.sql7[0] }}">
                 </td>
             </tr>
             <tr>
@@ -121,10 +127,11 @@
                 <th>내용(최근)</th>
                 <td>{{ P_hospital.Details[0] }}</td> <!--수정불가-->
             </tr>
-            <tr>
+            <!--<tr>
                 <th>코드</th>
-                <td>PlaceHolder</td> <!--임의-->
+                <td>PlaceHolder</td> 
             </tr>
+            -->
 
     </tbody>
 </table>
