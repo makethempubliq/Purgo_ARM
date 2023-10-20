@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <style>.hospital-name {cursor: pointer;} </style>
 
     <title>Purgo=process-confirmation</title>
 
@@ -336,7 +337,74 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="../static/js/app.js"></script>
+    <script>
+        let openWin;
+        let rowIndex;
+        let cellIndex;
 
+        function getIndex() {
+            // 다섯 번째 열 (셀) 클릭 시에 실행
+            $("#example tbody tr td:nth-child(5)").on("click", function () {
+                var tr = $(this).closest("tr");
+                if (!tr.is(":first-child") || !tr.closest("thead").length) {
+                    var td = tr.children();
+                    var code = td.eq(4).text();
+                    const s = JSON.stringify(code);
+                    alert("클릭한 Row의 모든 데이터: " + tr.text());
+                    $.ajax({
+                        url: "/test",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(s)
+                    });
+                    window.open('/popup', 'update', 'width=600, height=700, popup=yes');
+                    popup.close();
+                }
+            });
+        }
+
+        // 페이지 로딩 시 클릭 이벤트 등록
+        getIndex();
+
+        $(document).ready(function () {
+            var table = $('#example').DataTable();
+
+            var selectedKind = 'all';
+            var selectedRegion = 'all';
+
+            table.on('draw.dt', function () {
+                // 페이지 변경 시에도 클릭 이벤트 등록
+                getIndex();
+            });
+
+            applyFilters(table, selectedKind, selectedRegion);
+
+            $('.filter-header[data-filter="kind"] .dropdown-item').click(function() {
+                selectedKind = $(this).data('value');
+                $('.filter-header[data-filter="kind"] .dropdown-toggle').html($(this).text());
+                applyFilters(table, selectedKind, selectedRegion);
+            });
+
+            $('.filter-header[data-filter="region"] .dropdown-item').click(function() {
+                selectedRegion = $(this).data('value');
+                $('.filter-header[data-filter="region"] .dropdown-toggle').html($(this).text());
+                applyFilters(table, selectedKind, selectedRegion);
+            });
+        });
+
+        function applyFilters(table, selectedKind, selectedRegion) {
+            table.column(1).search('').draw();
+            table.column(2).search('').draw();
+
+            if (selectedKind !== 'all') {
+                table.column(1).search(selectedKind).draw();
+            }
+
+            if (selectedRegion !== 'all') {
+                table.column(2).search(selectedRegion).draw();
+            }
+        }
+</script>
 </body>
 
 </html>
