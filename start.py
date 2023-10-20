@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import pymysql
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
 
-from loginregister import UserCreateForm
+from loginregister import UserCreateForm, UserLoginForm
 from information import getinform, set_code, getPinform, p_update,get_hospital_names
 
 
@@ -70,9 +70,26 @@ def progress_confirmation():
 def manager_function():
     return render_template('manager-function.html')
 
-@app.route('/login.html')
+@app.route('/login.html', methods=('GET', 'POST'))
 def login():
-    return render_template('login.html')
+    form = UserLoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        error = None
+        cursor = db.cursor()
+        cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
+        user = cursor.fetchone()
+        cursor.execute(f"select user_Password from master_User where user_Email = \'{form.email.data}\'")
+        pw = cursor.fetchone()
+        if not user:
+            error = "존재하지 않는 사용자입니다."
+        elif not check_password_hash(pw[0], form.password.data):
+            error = "비밀번호가 올바르지 않습니다."
+        if error is None:
+            session.clear()
+            session['user_id'] = user[0]
+            return redirect(url_for('index'))
+        flash(error)
+    return render_template('login.html', form=form)
 
 @app.route('/forgot-password.html')
 def forgot_password():

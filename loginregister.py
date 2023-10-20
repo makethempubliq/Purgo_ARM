@@ -9,3 +9,7 @@ class UserCreateForm(FlaskForm):
     password2 = PasswordField('비밀번호확인', validators=[DataRequired()])
     email = EmailField('이메일', validators=[DataRequired(), Email()])
     dept = TextAreaField('부서', validators=[DataRequired()])
+
+class UserLoginForm(FlaskForm):
+    email = EmailField('이메일', validators=[DataRequired(), Email()])
+    password = PasswordField('비밀번호', validators=[DataRequired()])
