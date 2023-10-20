@@ -82,13 +82,10 @@ def forgot_password():
 def register():
     form = UserCreateForm()
     cursor = db.cursor()
+    cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
+    user = cursor.fetchall()
     if request.method == 'POST' and form.validate_on_submit():
-        cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
-        user = cursor.fetchall()
-        data_list = []
-        for obj in user:
-            data_list.append(obj)
-        if form.email.data not in data_list:
+        if not user:
             username=form.username.data
             password=generate_password_hash(form.password1.data)
             email=form.email.data
