@@ -43,20 +43,20 @@
     <tbody>
             <tr>
                 <th>병원명</th>
-                <td>{{ P_hospital.Hname[0]}}"</td>
+                <td>{{ P_hospital.Hname[0][0]}}</td>
                     
             </tr>
             <tr>
                 <th>원장</th>
                 <td>
-                    <input type="text" name="H_dir" size="20" style="width:100%; border: 0; text-align: center; background-color: transparent;" value="{{ P_hospital.Hdirect[0] }}">
+                    <input type="text" name="H_dir" size="20" style="width:100%; border: 0; text-align: center; background-color: transparent;" value="{{ P_hospital.Hdirect[0][0] }}">
                 </td>
             </tr>
             <tr>
             <th>학교</th>
             <td>
                 <select id="collegeSelect" name="college">
-                                <option value="{{ P_hospital.sql5[0] }}">{{ P_hospital.sql5[0] }}</option>
+                                <option value="{{ P_hospital.sql5[0][0] }}">{{ P_hospital.sql5[0][0] }}</option>
                                 {% for obj in P_hospital.college %}
                                     <option value="{{ obj[1] }}">{{ obj[1] }}</option>
                                 {% endfor %}
@@ -67,7 +67,7 @@
             <th>전공</th>
             <td>
                 <select id="majorSelect" name="major">
-                    <option value="{{ P_hospital.sql6[0] }}">{{ P_hospital.sql6[0] }}</option>
+                    <option value="{{ P_hospital.sql6[0][0] }}">{{ P_hospital.sql6[0][0] }}</option>
                     {% for obj in P_hospital.Major %}
                         <option value="{{ obj[1] }}">{{ obj[1] }}</option>
                     {% endfor %}
@@ -76,14 +76,14 @@
         </tr>
             <tr>
                 <th>졸업년도</th>
-                <td><input type="text" name="GraduYear" size="20" style="width:100%; border: 0; text-align: center; background-color: transparent;" value="{{ P_hospital.sql7[0] }}">
+                <td><input type="text" name="GraduYear" size="20" style="width:100%; border: 0; text-align: center; background-color: transparent;" value="{{ P_hospital.sql7[0][0] }}">
                 </td>
             </tr>
             <tr>
                 <th>담당자</th>
                 <td>
                     <select id="responSelect" name="Manager">
-                        <option value="{{ P_hospital.sql8[0] }}">{{ P_hospital.sql8[0] }}</option>
+                        <option value="{{ P_hospital.sql8[0][0] }}">{{ P_hospital.sql8[0][0] }}</option>
                     {% for obj in P_hospital.sql8 %}
                         <option value="{{ obj[0] }}">{{ obj[0] }}</option>
                     {% endfor %}
@@ -94,7 +94,7 @@
                 <th>제품</th>
                 <td>
                     <select id="productSelect" name="product">
-                        <option value="{{ P_hospital.sql9[0] }}">{{ P_hospital.sql9[0] }}</option>
+                        <option value="{{ P_hospital.sql9[0][0] }}">{{ P_hospital.sql9[0][0] }}</option>
                         {% for obj in P_hospital.Product %}
                             <option value="{{ obj[1] }}">{{ obj[1] }}</option>
                         {% endfor %}
@@ -105,7 +105,7 @@
                 <th>경쟁업체</th>
                 <td>
                     <select id="competitorSelect" name="competitor">
-                        <option value="{{ P_hospital.sql10[0] }}">{{ P_hospital.sql10[0] }}</option>
+                        <option value="{{ P_hospital.sql10[0][0] }}">{{ P_hospital.sql10[0][0] }}</option>
                         {% for obj in P_hospital.Competitor %}
                             <option value="{{ obj[1] }}">{{ obj[1] }}</option>
                         {% endfor %}
@@ -115,11 +115,11 @@
 
             <tr>
                 <th>등급</th>
-                <td>{{ P_hospital.Rank[0] }}</td> <!--수정불가-->
+                <td>{{ P_hospital.Rank[0][0] }}</td> <!--수정불가-->
             </tr>
             <tr>
                 <th>내용(최근)</th>
-                <td>{{ P_hospital.Details[0] }}</td> <!--수정불가-->
+                <td>{{ P_hospital.Details[0][0] }}</td> <!--수정불가-->
             </tr>
             <!--<tr>
                 <th>코드</th>
