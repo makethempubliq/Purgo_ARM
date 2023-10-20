@@ -58,11 +58,13 @@ def hospital_information():
 
 @app.route('/progress-registration.html')
 def progress_registration():
-    return render_template('progress-registration.html')
+    hospital_names = get_hospital_names()
+    return render_template('progress-registration.html',hospital_names=hospital_names)
 
 @app.route('/progress-confirmation.html')
 def progress_confirmation():
-    return render_template('progress-confirmation.html')
+    hospital_names = get_hospital_names()
+    return render_template('progress-confirmation.html', hospital_names=hospital_names)
 
 @app.route('/manager-function.html')
 def manager_function():
