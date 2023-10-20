@@ -12,7 +12,6 @@ code = ''
 
 @dataclass
 class masters:
-    
     Hname:List[str] = field(default_factory=list)
     Rank:List[str] = field(default_factory=list)
     Details:List[str] = field(default_factory=list)
@@ -73,6 +72,7 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     dlist_pro = []
     dlist_com = []
     
+
 
     cursor.execute(sql)
     sql_p = cursor.fetchall()
@@ -192,17 +192,7 @@ def get_hospital_names():
 
 def getPinform():
 
-    
-
-    #data_list = []
-    #for obj in data:
-    #    data_list.append(obj)
     Masters = masters_init()
-    print("여긴 객체 테스트")
-    print(Masters.Rank)
-    print(Masters.college)
-    #print(data_list)
-    #cursor.close()
     return Masters
 
 
@@ -212,7 +202,6 @@ def p_update(data): #팝업 업데이트 함수
     up_sql = "update hospital_Detail set hospital_Director = " + "'" + data['H_dir'] + "'" + ", director_College = " + "'" + data['college'] + "'" + ", director_Major = " + "'" + data['major'] + "'" + ", director_GraduateYear = " + "'" + data['GraduYear'] + "'" + ", hospital_manager = " + "'" + data['Manager'] + "'" + ", hospital_Product = " + "'" + data['product'] + "'" + ", hospital_competitor = " + "'" + data['competitor'] + "'" + " where ykiho = " + code
     cursor.execute(up_sql)
     cursor.connection.commit()
-    print(up_sql)
     return None
 
 def set_code(s_code):
@@ -223,7 +212,6 @@ def set_code(s_code):
 
 def Hinform_Upadate():
     sql2 = "select * from hospital_Detail where ykiho = "
-    print(sql2)
     cursor.execute(sql2)
     data = cursor.fetchall()
     data_list = []
