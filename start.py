@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 
 
 from loginregister import UserCreateForm
-from information import getinform, set_code, getPinform
+from information import getinform, set_code, getPinform, p_update,get_hospital_names
 
 
 import config
@@ -102,6 +102,19 @@ def register():
     return render_template('register.html', form=form)
 
 
+@app.route('/update', methods=['POST'])
+def popup_update():
+    print("여긴 업데이트 함수")
+    print(request.form.get("major"))
+    data = {"H_dir" : request.form.get("H_dir"), "college" : request.form.get("college"), "major" : request.form.get("major"), 
+            "GraduYear" : request.form.get("GraduYear"),"Manager" : request.form.get("Manager"),"product" : request.form.get("product")
+            ,"competitor":request.form.get("competitor")}
+    
+    p_update(data)
+    return redirect(url_for('popup_function'))
+
+
+
 @app.route('/popup')
 def popup_function():
     return render_template('popup.html',P_hospital=getPinform())
@@ -111,7 +124,7 @@ def popup_function():
 def test():
     output = request.get_json()
 
-    set_code(output)
+    set_code(output) #여기서 코드값 inform.py로 넘긴다
     return ('', 204)
 
 
