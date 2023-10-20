@@ -179,6 +179,17 @@ def getinform():
     return data_list
 
 
+def get_hospital_names():
+    cursor.execute(sql1)
+    data = cursor.fetchall()
+
+    # 병원명만 추출하여 리스트로 저장
+    hospital_names = [obj[0] for obj in data]
+
+    return hospital_names
+
+
+
 def getPinform():
 
     
