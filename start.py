@@ -104,8 +104,6 @@ def register():
 
 @app.route('/update', methods=['POST'])
 def popup_update():
-    print("여긴 업데이트 함수")
-    print(request.form.get("major"))
     data = {"H_dir" : request.form.get("H_dir"), "college" : request.form.get("college"), "major" : request.form.get("major"), 
             "GraduYear" : request.form.get("GraduYear"),"Manager" : request.form.get("Manager"),"product" : request.form.get("product")
             ,"competitor":request.form.get("competitor")}
