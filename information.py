@@ -206,7 +206,14 @@ def getPinform():
     return Masters
 
 
-    
+def p_update(data): #팝업 업데이트 함수
+    error_sql = "SET FOREIGN_KEY_CHECKS = 0"
+    cursor.execute(error_sql)
+    up_sql = "update hospital_Detail set hospital_Director = " + "'" + data['H_dir'] + "'" + ", director_College = " + "'" + data['college'] + "'" + ", director_Major = " + "'" + data['major'] + "'" + ", director_GraduateYear = " + "'" + data['GraduYear'] + "'" + ", hospital_manager = " + "'" + data['Manager'] + "'" + ", hospital_Product = " + "'" + data['product'] + "'" + ", hospital_competitor = " + "'" + data['competitor'] + "'" + " where ykiho = " + code
+    cursor.execute(up_sql)
+    cursor.connection.commit()
+    print(up_sql)
+    return None
 
 def set_code(s_code):
     global code
@@ -226,3 +233,6 @@ def Hinform_Upadate():
     #print(data_list)
     #cursor.close()
     return data_list
+#17:33:42	update hospital_Detail set hospital_Director = '조석훈' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	1 row(s) affected Rows matched: 1  Changed: 1  Warnings: 0	0.015 sec
+#17:33:21	update hospital_Detail set hospital_Director = '조석훈', hospital_competitor = 'Allo-Oss' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`purgo_ARM_DB`.`hospital_Detail`, CONSTRAINT `hospital_Detail_ibfk_6` FOREIGN KEY (`hospital_competitor`) REFERENCES `master_Competitor` (`competitor_Name`))	0.016 sec
+# 대학, 전공, 등급, 제품, 경쟁업체
