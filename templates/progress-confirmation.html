@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
 
@@ -17,6 +17,9 @@
         rel="stylesheet">
 
     <link href="{{ url_for('static', filename='css/purgobio.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
 
 </head>
 
@@ -264,12 +267,39 @@
 
                 </nav>
 
-                <div class="container-fluid">
-
-
-        </div>
-
-    </div>
+                <div class="container-fluid" id="nav">
+                    <h1 class="h5 mb-2 text-gray-800">진행사항 확인</h1>
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="example" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr class="table-primary">
+                                            <th>상태</th>
+                                            <th>마지막 등록</th>
+                                            <th>구분</th>
+                                            <th>담당자</th>
+                                            <th>병원명</th>
+                                            <th>내용</th>
+                                        </tr>
+                                    </thead>
+                                   <tbody>
+                                {% for name in hospital_names %}
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="hospital-name" data-hospital-name="{{ name }}">{{ name }}</td> <!-- 병원명만 표시 -->
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
@@ -294,11 +324,18 @@
         </div>
     </div>
 
+
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/purgobio.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="../static/js/app.js"></script>
 
 </body>
 
