@@ -13,6 +13,7 @@ code = ''
 @dataclass
 class masters:
     
+    Hname:List[str] = field(default_factory=list)
     Rank:List[str] = field(default_factory=list)
     Details:List[str] = field(default_factory=list)
     Hdirect:List[str] = field(default_factory=list)
@@ -41,7 +42,8 @@ sql1 = 'select H.yadmNm, H.clCdNm, substring_index(H.addr, \' \', 2), ifnull(D.h
 cursor = db.cursor()
 
 def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 가져와 초기화 시킨 후 객체변수를 리턴하는 함수
-
+    
+    sql = "select yadmNm from Hospital where ykiho = " + code                         #병원명
     sql2 = "select hospital_Rank from hospital_Detail where ykiho = " + code          #랭크
     sql3 = "select meeting_Detail from hospital_Detail where ykiho = " + code         #내용(최근)
     sql4 = "select hospital_Director from hospital_Detail where ykiho = " + code      #병원장(불러오기)
@@ -56,6 +58,7 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     pro_s = "select * from master_Product"
     com_s = "select * from master_Competitor"
 
+    dlist_Hnm = []
     dlist_r = []
     dlist_detail = []
     dlist_Hdirect = []
@@ -69,8 +72,14 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     dlist_maj = []
     dlist_pro = []
     dlist_com = []
-    print("ㅈㅇㅁㅈㅇㅁㅈㅇㅁㅈㅇㅈㅁ코드: " + code)
-    print("sql2 = "+sql2)
+    
+
+    cursor.execute(sql)
+    sql_p = cursor.fetchall()
+
+    for obj in sql_p:
+        dlist_Hnm.append(obj)
+
     cursor.execute(sql2)
     sql2_p = cursor.fetchall()
 
@@ -150,7 +159,7 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     for obj in com_P:
         dlist_com.append(obj)
   
-    Masters  = masters(Rank = dlist_r, Details = dlist_detail, Hdirect = dlist_Hdirect, sql5 = dlist_sql5, sql6 = dlist_sql6,sql7= dlist_sql7,
+    Masters  = masters(Hname =dlist_Hnm, Rank = dlist_r, Details = dlist_detail, Hdirect = dlist_Hdirect, sql5 = dlist_sql5, sql6 = dlist_sql6,sql7= dlist_sql7,
                        sql8 = dlist_sql8 , sql9= dlist_sql9, sql10 = dlist_sql10,        
                        college = dlist_col, Major=dlist_maj, Product=dlist_pro, Competitor=dlist_com)
 
