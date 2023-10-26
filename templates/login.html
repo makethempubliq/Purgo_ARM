@@ -46,11 +46,12 @@
                                     <form class="user" method="post">
                                         {{ form.csrf_token }}
                                         <div class="form-group">
-                                            <input type="email" class="form-control" name="email" id="email"  value="{{ form.email.data or '' }}"
+                                            <input type="email" class="form-control form-control-user" name="email" id="email"  value="{{ form.email.data or '' }}"
                                                 placeholder="Enter Email Address">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control" name="password" id="password" value="{{ form.password.data or '' }}">
+                                            <input type="password" class="form-control form-control-user" name="password" id="password" value="{{ form.password.data or '' }}"
+                                            placeholder="Enter Your Password">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -59,8 +60,9 @@
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">로그인</button>
-                                        <hr>
+                                        <div style="text-align: center;">
+                                            <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                                        </div>
                                     </form>
                                     <hr>
                                     <div class="text-center">
