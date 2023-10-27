@@ -21,8 +21,7 @@ db = pymysql.connect(
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
 app.config.from_object(config)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://armteam:purgo1234@purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com/purgo_ARM_DB'
-db = SQLAlchemy(app)
+
 
 @app.route('/')
 def index():
@@ -151,35 +150,38 @@ def get_hospital_names_endpoint():
     return jsonify(hospital_names)
 
 app.jinja_env.globals['generate_unique_id'] = generate_unique_id
+@app.route('/save_data', methods=['POST'])
+def save_data():
+    hospital_name = request.form.get('hospitalName')
+    grade = request.form.get('grade')
+    content = request.form.get('content')
 
-class HospitalEntry(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    registration_date = db.Column(db.Date)
-    grade = db.Column(db.String(50))
-    hospital_name = db.Column(db.String(100))
-    content = db.Column(db.Text)
+    try:
+        cursor = db.cursor()
 
-@app.route('/save_entry', methods=['POST'])
-def save_entry():
-    if request.method == 'POST':
-        registration_date = request.form.get('registration_date')
-        grade = request.form.get('grade')
-        hospital_name = request.form.get('hospital_name')
-        content = request.form.get('content')
+        hospital_id = get_hospital_names()
 
-        new_entry = HospitalEntry(
-            registration_date=registration_date,
-            grade=grade,
-            hospital_name=hospital_name,
-            content=content
-        )
-        db.session.add(new_entry)
-        db.session.commit()
+        if hospital_id is not None:
+            # 병원명이 이미 존재하면 업데이트
+            update_hospital_rank = "UPDATE hospital_Detail SET hospital_Rank = %s WHERE ykiho = %s"
+            cursor.execute(update_hospital_rank, (grade, hospital_id))
 
-        return jsonify({'message': 'Entry saved successfully'})
-    else:
-        return jsonify({'message': 'Invalid request'})
+            update_meeting_detail = "UPDATE hospital_Detail SET meeting_Detail = %s WHERE ykiho = %s"
+            cursor.execute(update_meeting_detail, (content, hospital_id))
+        else:
+            # 병원명이 존재하지 않으면 새로 삽입
+            insert_hospital_rank = "INSERT INTO hospital_Detail (ykiho, hospital_Rank) VALUES (%s, %s)"
+            cursor.execute(insert_hospital_rank, (hospital_id, grade))
 
+            insert_meeting_detail = "INSERT INTO hospital_Detail (ykiho, meeting_Detail) VALUES (%s, %s)"
+            cursor.execute(insert_meeting_detail, (hospital_id, content))
+
+        db.commit()
+        cursor.close()
+        return jsonify({"message": "Data saved successfully"})
+    except Exception as e:
+        print(f"데이터 저장 중 오류 발생: {e}")
+        return jsonify({"message": "Data saving failed"})
 
 if __name__ == '__main__':
     app.run(debug=True)
