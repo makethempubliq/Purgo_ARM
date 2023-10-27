@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
-
+from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm
 from information import getinform, set_code, getPinform, p_update,get_hospital_names
-
+from flask_sqlalchemy import SQLAlchemy
 
 import config
 
@@ -21,6 +21,9 @@ db = pymysql.connect(
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
 app.config.from_object(config)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://armteam:purgo1234@purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com/purgo_ARM_DB'
+db = SQLAlchemy(app)
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -138,6 +141,44 @@ def test():
 
     set_code(output) #여기서 코드값 inform.py로 넘긴다
     return ('', 204)
+
+def generate_unique_id():
+    pass
+
+@app.route('/get_hospital_names', methods=['GET'])
+def get_hospital_names_endpoint():
+    hospital_names = get_hospital_names()
+    return jsonify(hospital_names)
+
+app.jinja_env.globals['generate_unique_id'] = generate_unique_id
+
+class HospitalEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    registration_date = db.Column(db.Date)
+    grade = db.Column(db.String(50))
+    hospital_name = db.Column(db.String(100))
+    content = db.Column(db.Text)
+
+@app.route('/save_entry', methods=['POST'])
+def save_entry():
+    if request.method == 'POST':
+        registration_date = request.form.get('registration_date')
+        grade = request.form.get('grade')
+        hospital_name = request.form.get('hospital_name')
+        content = request.form.get('content')
+
+        new_entry = HospitalEntry(
+            registration_date=registration_date,
+            grade=grade,
+            hospital_name=hospital_name,
+            content=content
+        )
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify({'message': 'Entry saved successfully'})
+    else:
+        return jsonify({'message': 'Invalid request'})
 
 
 if __name__ == '__main__':
