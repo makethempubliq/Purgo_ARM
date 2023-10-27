@@ -8,9 +8,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <style>.hospital-name {cursor: pointer;} </style>
+    <style>.hospital-name {cursor: pointer;}
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1; display: flex; justify-content: center; align-items: center; }
+.modal-content{background-color:#fff;padding:20px;max-width:400px;text-align:center;border:none;border-radius:10px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.close{position:absolute;top:10px;right:10px;font-size:25px}
+.close:hover{color:black;cursor:pointer;}
+.search-results{position:absolute;z-index:1;max-height:150px;overflow-y:auto;display:none;border:1px solid #ccc;background-color:#fff;}
+.search-results a{display:block;padding:10px;text-decoration:none;color:#333;}
+.search-results a:hover { background-color: #f5f5f5;}
+#hospitalSearch{width:100%;text-align:center;border:none;}
+#gradeSelect{width:100%;text-align:center;border:none;}
+#contentTextarea{width:100%;border:1px solid #f5f5f5;display:flex;justify-content:center;align-items:center;height:100%;padding:0;text-align:center;}
+#saveButton{margin-top:20px;border:none;background-color:#cfe2ff;color:#000;border-radius:5px;font-weight:bold;}
+#saveButton:hover{background-color:#a9c9ff;}
 
-    <title>Purgo=process-confirmation</title>
+</style>
+
+    <title>Purgo=process-registration</title>
 
     <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link
@@ -267,11 +281,44 @@
                     </ul>
 
                 </nav>
-
                 <div class="container-fluid" id="nav">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h1 class="h5 mb-2 text-gray-800" style="display: inline-block;">진행사항 등록</h1>
-                        <button type="submit" class="btn btn-lg" style="background-color: #cfe2ff; font-size: 15px; font-weight: bold;">영업내용 등록</button>
+                        <button id="openModalButton" type="button" class="btn btn-lg" style="background-color: #cfe2ff; font-size: 15px; font-weight: bold;">영업내용 등록</button>
+                        <div id="myModal" class="modal">
+                          <div class="modal-content">
+                            <span class="close" id="closeModalButton">&times;</span>
+                            <h4>영업내용 등록</h4>
+                            <table>
+                              <tr>
+                                <td class="hospital-name" data-hospital-name="병원명">병원명: </td>
+                                <td>
+                                 <input type="text" id="hospitalSearch" placeholder="병원명 검색">
+                                    <div id="hospitalSearchResults" class="search-results"></div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>등급 :</td>
+                                <td>
+                                  <select id="gradeSelect">
+                                      <option value="Act">Act</option>
+                                      <option value="Bestcase">Bestcase</option>
+                                      <option value="Opportunity">Opportunity</option>
+                                      <option value="Pipeline">Pipeline</option>
+                                      <option value="Funnel">Funnel</option>
+                                    </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>내용 :</td>
+                                <td>
+                                  <textarea id="contentTextarea" rows="2" cols="20"></textarea>
+                                </td>
+                              </tr>
+                            </table>
+                            <button class="btn btn-primary btn-user btn-block" id="saveButton">저장</button>
+                          </div>
+                        </div>
                     </div>
                     <div class="card shadow mb-4" style="margin-top: 20px;">
                         <div class="card-body">
@@ -288,15 +335,15 @@
                                     </thead>
                                    <tbody>
                                     {% for name in hospital_names %}
-                                    <tr>
+                                    <tr data-hospital-id="{{ generate_unique_id() }}">
                                         <td><input type="date" name="registration_date" required></td>
                                         <td></td>
-                                        <td class="hospital-name" data-hospital-name="{{ name }}">{{ name }}</td> <!-- 병원명만 표시 -->
+                                        <td class="hospital-name" data-hospital-name="{{ name }}">{{ name }}</td>
                                         <td></td>
                                         <td></td>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
+                                    {% endfor %}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -364,7 +411,6 @@
         });
     }
 
-    // 페이지 로딩 시 클릭 이벤트 등록
     getIndex();
 
     $(document).ready(function () {
@@ -374,7 +420,6 @@
         var selectedRegion = 'all';
 
         table.on('draw.dt', function () {
-            // 페이지 변경 시에도 클릭 이벤트 등록
             getIndex();
         });
 
@@ -405,6 +450,106 @@
             table.column(2).search(selectedRegion).draw();
         }
 }
+
+document.getElementById("openModalButton").addEventListener("click", function() {
+  document.getElementById("myModal").style.display = "block";
+
+});
+
+document.getElementById("closeModalButton").addEventListener("click", function() {
+  document.getElementById("myModal").style.display = "none";
+});
+
+window.addEventListener("click", function(event) {
+  if (event.target == document.getElementById("myModal")) {
+    document.getElementById("myModal").style.display = "none";
+  }
+});
+
+// 저장 버튼
+$(document).ready(function() {
+    $("#saveButton").on("click", function() {
+        var registration_date = $("input[name='registration_date']").val();
+        var grade = $("#gradeSelect").val();
+        var hospital_name = $("#hospitalSearch").val();
+        var content = $("#contentTextarea").val();
+
+        $.ajax({
+            url: '/save_entry',
+            type: 'POST',
+            data: {
+                registration_date: registration_date,
+                grade: grade,
+                hospital_name: hospital_name,
+                content: content
+            },
+            success: function(response) {
+                alert(response.message);
+            },
+            error: function(error) {
+                alert('저장 중 오류가 발생했습니다.');
+            }
+        });
+    });
+});
+
+// 병원명 검색
+var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(function(nameElement) {
+            return nameElement.getAttribute("data-hospital-name").toLowerCase();
+        });
+        var hospitalSearchInput = document.getElementById("hospitalSearch");
+        var hospitalSearchResults = document.getElementById("hospitalSearchResults");
+
+        hospitalSearchInput.addEventListener("input", function() {
+            var query = hospitalSearchInput.value.toLowerCase();
+            $.get('/get_hospital_names', function(data) {
+            var results = data.filter(function(name) {
+                return name.toLowerCase().includes(query);
+            });
+
+            displayResults(results);
+        });
+    });
+
+
+        function displayResults(results) {
+            if (results.length > 0) {
+                hospitalSearchResults.innerHTML = "";
+                results.forEach(function(result) {
+                    var resultItem = document.createElement("a");
+                    resultItem.textContent = result;
+                    resultItem.href = "#";
+                    resultItem.addEventListener("click", function(event) {
+                        event.preventDefault();
+                        hospitalSearchInput.value = result;
+                        hospitalSearchResults.style.display = "none";
+                        // Place the selected hospital at the top of the table
+                        moveHospitalToTop(result);
+                    });
+                    hospitalSearchResults.appendChild(resultItem);
+                });
+
+                hospitalSearchResults.style.display = "block";
+            } else {
+                hospitalSearchResults.style.display = "none";
+            }
+        }
+
+        function moveHospitalToTop(selectedHospital) {
+            var table = document.querySelector("table");
+            var rows = table.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var nameCell = rows[i].getElementsByClassName("hospital-name")[0];
+                if (nameCell) {
+                    var name = nameCell.getAttribute("data-hospital-name").toLowerCase();
+                    if (name === selectedHospital) {
+                        table.insertBefore(rows[i], table.childNodes[3]); // Insert at the top
+                        break;
+                    }
+                }
+            }
+        }
 </script>
 
 </body>
