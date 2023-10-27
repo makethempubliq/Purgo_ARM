@@ -1,557 +1,195 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <style>.hospital-name {cursor: pointer;}
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1; display: flex; justify-content: center; align-items: center; }
-.modal-content{background-color:#fff;padding:20px;max-width:400px;text-align:center;border:none;border-radius:10px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-.close{position:absolute;top:10px;right:10px;font-size:25px}
-.close:hover{color:black;cursor:pointer;}
-.search-results{position:absolute;z-index:1;max-height:150px;overflow-y:auto;display:none;border:1px solid #ccc;background-color:#fff;}
-.search-results a{display:block;padding:10px;text-decoration:none;color:#333;}
-.search-results a:hover { background-color: #f5f5f5;}
-#hospitalSearch{width:100%;text-align:center;border:none;}
-#gradeSelect{width:100%;text-align:center;border:none;}
-#contentTextarea{width:100%;border:1px solid #f5f5f5;display:flex;justify-content:center;align-items:center;height:100%;padding:0;text-align:center;}
-#saveButton{margin-top:20px;border:none;background-color:#cfe2ff;color:#000;border-radius:5px;font-weight:bold;}
-#saveButton:hover{background-color:#a9c9ff;}
-
-</style>
-
-    <title>Purgo=process-registration</title>
-
-    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <link href="{{ url_for('static', filename='css/purgobio.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
-
-</head>
-
-<body id="page-top">
-
-    <div id="wrapper">
-
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-                <img class="sidebar-barnd-img" src="{{ url_for('static', filename='img/purgologo.svg') }}" alt="...">
-            </a>
-
-
-            <hr class="sidebar-divider my-0">
-
-            <li class="nav-item">
-                <a class="nav-link" href="/">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <hr class="sidebar-divider">
-
-           <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>마스터 등록</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Components:</h6>
-                        <a class="collapse-item" href="master-school.html">학교마스터</a>
-                        <a class="collapse-item" href="master-major.html">전공마스터</a>
-                        <a class="collapse-item" href="master-grade.html">등급마스터</a>
-                        <a class="collapse-item" href="master-competition.html">경쟁업체마스터</a>
-                        <a class="collapse-item" href="master-product.html">제품마스터</a>
-                        <a class="collapse-item" href="master-information.html">직원정보</a>
-
-                    </div>
-                </div>
-            </li>
-
-
-
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="hospital-information.html">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>병원정보</span></a>
-            </li>
-
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="progress-registration.html">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>진행사항 등록</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="progress-confirmation.html">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>진행사항 확인</span></a>
-            </li>
-
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <li class="nav-item">
-                <a class="nav-link" href="manager-function.html">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>관리자 기능</span></a>
-            </li>
-
-
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
-
-        <div id="content-wrapper" class="d-flex flex-column">
-
-            <div id="content">
-
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <ul class="navbar-nav ml-auto">
-
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
-
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}" alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">
-                                            text
-                                        </div>
-                                        <div class="small text-gray-500"> 조나단 </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_2.svg') }}" alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">
-                                            text
-                                        </div>
-                                        <div class="small text-gray-500">조나단</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_3.svg') }}" alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">] text </div>
-                                        <div class="small text-gray-500">조나단</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Manager</span>
-                                <img class="img-profile rounded-circle" src="{{ url_for('static', filename='img/undraw_profile.svg') }}">
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <div class="container-fluid" id="nav">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h1 class="h5 mb-2 text-gray-800" style="display: inline-block;">진행사항 등록</h1>
-                        <button id="openModalButton" type="button" class="btn btn-lg" style="background-color: #cfe2ff; font-size: 15px; font-weight: bold;">영업내용 등록</button>
-                        <div id="myModal" class="modal">
-                          <div class="modal-content">
-                            <span class="close" id="closeModalButton">&times;</span>
-                            <h4>영업내용 등록</h4>
-                            <table>
-                              <tr>
-                                <td class="hospital-name" data-hospital-name="병원명">병원명: </td>
-                                <td>
-                                 <input type="text" id="hospitalSearch" placeholder="병원명 검색">
-                                    <div id="hospitalSearchResults" class="search-results"></div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>등급 :</td>
-                                <td>
-                                  <select id="gradeSelect">
-                                      <option value="Act">Act</option>
-                                      <option value="Bestcase">Bestcase</option>
-                                      <option value="Opportunity">Opportunity</option>
-                                      <option value="Pipeline">Pipeline</option>
-                                      <option value="Funnel">Funnel</option>
-                                    </select>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>내용 :</td>
-                                <td>
-                                  <textarea id="contentTextarea" rows="2" cols="20"></textarea>
-                                </td>
-                              </tr>
-                            </table>
-                            <button class="btn btn-primary btn-user btn-block" id="saveButton">저장</button>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4" style="margin-top: 20px;">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover" id="example" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr class="table-primary">
-                                            <th>등록일자</th>
-                                            <th>등급</th>
-                                            <th>병원명</th>
-                                            <th>원장</th>
-                                            <th>내용</th>
-                                        </tr>
-                                    </thead>
-                                   <tbody>
-                                    {% for name in hospital_names %}
-                                    <tr data-hospital-id="{{ generate_unique_id() }}">
-                                        <td><input type="date" name="registration_date" required></td>
-                                        <td></td>
-                                        <td class="hospital-name" data-hospital-name="{{ name }}">{{ name }}</td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">로그아웃 하시겠습니까?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">현재 세션을 종료할 준비가 되셨다면 아래의 "로그아웃"을 선택하십시오.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/purgobio.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
-
-    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="../static/js/app.js"></script>
-
-    <script>
-    let openWin;
-    let rowIndex;
-    let cellIndex;
-
-    function getIndex() {
-        $("#example tbody tr td:nth-child(3)").on("click", function () {
-            var tr = $(this).closest("tr");
-            if (!tr.is(":first-child") || !tr.closest("thead").length) {
-                var td = tr.children();
-                var code = td.eq(4).text();
-                const s = JSON.stringify(code);
-                alert("클릭한 Row의 모든 데이터: " + tr.text());
-                $.ajax({
-                    url: "/test",
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(s)
-                });
-                window.open('/popup', 'update', 'width=600, height=700, popup=yes');
-                popup.close();
-            }
-        });
-    }
-
-    getIndex();
-
-    $(document).ready(function () {
-        var table = $('#example').DataTable();
-
-        var selectedKind = 'all';
-        var selectedRegion = 'all';
-
-        table.on('draw.dt', function () {
-            getIndex();
-        });
-
-        applyFilters(table, selectedKind, selectedRegion);
-
-        $('.filter-header[data-filter="kind"] .dropdown-item').click(function() {
-            selectedKind = $(this).data('value');
-            $('.filter-header[data-filter="kind"] .dropdown-toggle').html($(this).text());
-            applyFilters(table, selectedKind, selectedRegion);
-        });
-
-        $('.filter-header[data-filter="region"] .dropdown-item').click(function() {
-            selectedRegion = $(this).data('value');
-            $('.filter-header[data-filter="region"] .dropdown-toggle').html($(this).text());
-            applyFilters(table, selectedKind, selectedRegion);
-        });
-    });
-
-    function applyFilters(table, selectedKind, selectedRegion) {
-        table.column(1).search('').draw();
-        table.column(2).search('').draw();
-
-        if (selectedKind !== 'all') {
-            table.column(1).search(selectedKind).draw();
-        }
-
-        if (selectedRegion !== 'all') {
-            table.column(2).search(selectedRegion).draw();
-        }
-}
-
-document.getElementById("openModalButton").addEventListener("click", function() {
-  document.getElementById("myModal").style.display = "block";
-
-});
-
-document.getElementById("closeModalButton").addEventListener("click", function() {
-  document.getElementById("myModal").style.display = "none";
-});
-
-window.addEventListener("click", function(event) {
-  if (event.target == document.getElementById("myModal")) {
-    document.getElementById("myModal").style.display = "none";
-  }
-});
-
-// 저장 버튼
-$(document).ready(function() {
-    $("#saveButton").on("click", function() {
-        var registration_date = $("input[name='registration_date']").val();
-        var grade = $("#gradeSelect").val();
-        var hospital_name = $("#hospitalSearch").val();
-        var content = $("#contentTextarea").val();
-
-        $.ajax({
-            url: '/save_entry',
-            type: 'POST',
-            data: {
-                registration_date: registration_date,
-                grade: grade,
-                hospital_name: hospital_name,
-                content: content
-            },
-            success: function(response) {
-                alert(response.message);
-            },
-            error: function(error) {
-                alert('저장 중 오류가 발생했습니다.');
-            }
-        });
-    });
-});
-
-// 병원명 검색
-var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(function(nameElement) {
-            return nameElement.getAttribute("data-hospital-name").toLowerCase();
-        });
-        var hospitalSearchInput = document.getElementById("hospitalSearch");
-        var hospitalSearchResults = document.getElementById("hospitalSearchResults");
-
-        hospitalSearchInput.addEventListener("input", function() {
-            var query = hospitalSearchInput.value.toLowerCase();
-            $.get('/get_hospital_names', function(data) {
-            var results = data.filter(function(name) {
-                return name.toLowerCase().includes(query);
-            });
-
-            displayResults(results);
-        });
-    });
-
-
-        function displayResults(results) {
-            if (results.length > 0) {
-                hospitalSearchResults.innerHTML = "";
-                results.forEach(function(result) {
-                    var resultItem = document.createElement("a");
-                    resultItem.textContent = result;
-                    resultItem.href = "#";
-                    resultItem.addEventListener("click", function(event) {
-                        event.preventDefault();
-                        hospitalSearchInput.value = result;
-                        hospitalSearchResults.style.display = "none";
-                        // Place the selected hospital at the top of the table
-                        moveHospitalToTop(result);
-                    });
-                    hospitalSearchResults.appendChild(resultItem);
-                });
-
-                hospitalSearchResults.style.display = "block";
-            } else {
-                hospitalSearchResults.style.display = "none";
-            }
-        }
-
-        function moveHospitalToTop(selectedHospital) {
-            var table = document.querySelector("table");
-            var rows = table.getElementsByTagName("tr");
-
-            for (var i = 0; i < rows.length; i++) {
-                var nameCell = rows[i].getElementsByClassName("hospital-name")[0];
-                if (nameCell) {
-                    var name = nameCell.getAttribute("data-hospital-name").toLowerCase();
-                    if (name === selectedHospital) {
-                        table.insertBefore(rows[i], table.childNodes[3]); // Insert at the top
-                        break;
-                    }
-                }
-            }
-        }
-</script>
-
-</body>
-
-</html>
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+import pymysql
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import redirect
+from jinja2 import Environment
+from flask_sqlalchemy import SQLAlchemy
+
+import config
+from loginregister import UserCreateForm, UserLoginForm
+from information import getinform, set_code, getPinform, p_update,get_hospital_names
+
+db = pymysql.connect(
+    host='purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com',
+    user='armteam',
+    passwd='purgo1234',
+    db='purgo_ARM_DB',
+    charset='utf8'
+)
+
+app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
+app.config.from_object(config)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/master-school.html')
+def master_school():
+    return render_template('master-school.html')
+
+
+@app.route('/master-major.html')
+def master_major():
+    return render_template('master-major.html')
+
+
+@app.route('/master-grade.html')
+def master_grade():
+    return render_template('master-grade.html')
+
+
+@app.route('/master-competition.html')
+def master_competition():
+    return render_template('master-competition.html')
+
+
+@app.route('/master-product.html')
+def master_product():
+    return render_template('master-product.html')
+
+
+@app.route('/master-information.html')
+def master_information():
+    return render_template('master-information.html')
+
+
+@app.route('/hospital-information.html')
+@app.route('/hospital-information.html/')
+def hospital_information():
+    return render_template('hospital-information.html', hospital=getinform())
+
+@app.route('/progress-registration.html')
+def progress_registration():
+    hospital_names = get_hospital_names()
+    return render_template('progress-registration.html',hospital_names=hospital_names)
+
+@app.route('/business-registration.html')
+def business_registration():
+    return render_template('business-registration.html')
+
+@app.route('/progress-confirmation.html')
+def progress_confirmation():
+    hospital_names = get_hospital_names()
+    return render_template('progress-confirmation.html', hospital_names=hospital_names)
+
+
+@app.route('/manager-function.html')
+def manager_function():
+    return render_template('manager-function.html')
+
+@app.route('/login.html', methods=('GET', 'POST'))
+def login():
+    form = UserLoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        error = None
+        cursor = db.cursor()
+        cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
+        user = cursor.fetchone()
+        cursor.execute(f"select user_Password from master_User where user_Email = \'{form.email.data}\'")
+        pw = cursor.fetchone()
+        if not user:
+            error = "존재하지 않는 사용자입니다."
+        elif not check_password_hash(pw[0], form.password.data):
+            error = "비밀번호가 올바르지 않습니다."
+        if error is None:
+            session.clear()
+            session['user_id'] = user[0]
+            return redirect(url_for('index'))
+        flash(error)
+    return render_template('login.html', form=form)
+
+@app.route('/forgot-password.html')
+def forgot_password():
+    return render_template('forgot-password.html')
+
+@app.route('/register.html', methods=('GET', 'POST'))
+def register():
+    form = UserCreateForm()
+    cursor = db.cursor()
+    cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
+    user = cursor.fetchall()
+    if request.method == 'POST' and form.validate_on_submit():
+        if not user:
+            username = form.username.data
+            password = generate_password_hash(form.password1.data)
+            email = form.email.data
+            dept = form.dept.data
+            sql = f"insert into master_User(user_Name, user_Password, user_Email, user_Dept) values(\'{username}\', \'{password}\', \'{email}\', \'{dept}\')"
+            cursor.execute(sql)
+            db.commit()
+            return redirect(url_for('index'))
+        else:
+            flash('이미 존재하는 사용자입니다.')
+    return render_template('register.html', form=form)
+
+@app.route('/update', methods=['POST'])
+def popup_update():
+    data = {"H_dir": request.form.get("H_dir"), "college": request.form.get("college"),
+            "major": request.form.get("major"),
+            "GraduYear": request.form.get("GraduYear"), "Manager": request.form.get("Manager"),
+            "product": request.form.get("product")
+        , "competitor": request.form.get("competitor")}
+
+    p_update(data)
+    return redirect(url_for('popup_function'))
+
+@app.route('/popup')
+def popup_function():
+    return render_template('popup.html', P_hospital=getPinform())
+
+@app.route('/test', methods=['POST'])
+def test():
+    output = request.get_json()
+
+    set_code(output)
+    return ('', 204)
+
+def generate_unique_id():
+    pass
+
+@app.route('/get_hospital_names', methods=['GET'])
+def get_hospital_names_endpoint():
+    hospital_names = get_hospital_names()
+    return jsonify(hospital_names)
+
+app.jinja_env.globals['generate_unique_id'] = generate_unique_id
+
+
+
+@app.route('/save_data', methods=['POST'])
+def save_data():
+    hospital_name = request.form.get('hospitalName')
+    grade = request.form.get('grade')
+    content = request.form.get('content')
+
+    try:
+        cursor = db.cursor()
+
+        hospital_id = get_hospital_names()
+
+        if hospital_id is not None:
+            # 병원명이 이미 존재하면 업데이트
+            update_hospital_rank = "UPDATE hospital_Detail SET hospital_Rank = %s WHERE ykiho = %s"
+            cursor.execute(update_hospital_rank, (grade, hospital_id))
+
+            update_meeting_detail = "UPDATE hospital_Detail SET meeting_Detail = %s WHERE ykiho = %s"
+            cursor.execute(update_meeting_detail, (content, hospital_id))
+        else:
+            # 병원명이 존재하지 않으면 새로 삽입
+            insert_hospital_rank = "INSERT INTO hospital_Detail (ykiho, hospital_Rank) VALUES (%s, %s)"
+            cursor.execute(insert_hospital_rank, (hospital_id, grade))
+
+            insert_meeting_detail = "INSERT INTO hospital_Detail (ykiho, meeting_Detail) VALUES (%s, %s)"
+            cursor.execute(insert_meeting_detail, (hospital_id, content))
+
+        db.commit()
+        cursor.close()
+        return jsonify({"message": "Data saved successfully"})
+    except Exception as e:
+        print(f"데이터 저장 중 오류 발생: {e}")
+        return jsonify({"message": "Data saving failed"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
