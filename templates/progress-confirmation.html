@@ -120,7 +120,7 @@
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button class="btn btn-primary" type="button" style="background-color: #4E73DF;">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
@@ -250,9 +250,10 @@
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <li class="nav-item dropdown no-arrow">
+                            {% if session %}
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Manager</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['user_id'] }}</span>
                                 <img class="img-profile rounded-circle" src="{{ url_for('static', filename='img/undraw_profile.svg') }}">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -262,6 +263,15 @@
                                     Logout
                                 </a>
                             </div>
+                            {% else %}
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('login') }}">
+                                        <button class="btn btn-primary btn-user btn-block" style="background-color: #4E73DF;">Login</button>
+                                    </a>
+                                </li>
+                            </ul>
+                            {% endif %}
                         </li>
 
                     </ul>
