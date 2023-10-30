@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
@@ -82,6 +82,7 @@ def login():
         user = cursor.fetchone()
         cursor.execute(f"select user_Password from master_User where user_Email = \'{form.email.data}\'")
         pw = cursor.fetchone()
+        cursor.close()
         if not user:
             error = "존재하지 않는 사용자입니다."
         elif not check_password_hash(pw[0], form.password.data):
@@ -92,6 +93,10 @@ def login():
             return redirect(url_for('index'))
         flash(error)
     return render_template('login.html', form=form)
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 @app.route('/forgot-password.html')
 def forgot_password():
@@ -112,10 +117,22 @@ def register():
             sql = f"insert into master_User(user_Name, user_Password, user_Email, user_Dept) values(\'{username}\', \'{password}\', \'{email}\', \'{dept}\')"
             cursor.execute(sql)
             db.commit()
+            cursor.close()
             return redirect(url_for('index'))
         else:
             flash('이미 존재하는 사용자입니다.')
     return render_template('register.html', form=form)
+
+@app.before_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
+    if user_id is None:
+        g.user = None
+    else:
+        cursor = db.cursor()
+        #cursor.execute(f"select * from master_User where user_Email = \'{user_id}\'")
+        #g.user = cursor.fetchall()
+        cursor.close()
 
 
 @app.route('/update', methods=['POST'])
