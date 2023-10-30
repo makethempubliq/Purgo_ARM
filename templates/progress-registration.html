@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <style>.hospital-name {cursor: pointer;}
+    <style>.hidden-col { display: none; }.table td.select { cursor:pointer; } 
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1; display: flex; justify-content: center; align-items: center; }
 .modal-content{background-color:#fff;padding:20px;max-width:400px;text-align:center;border:none;border-radius:10px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
 .close{position:absolute;top:10px;right:10px;font-size:25px}
@@ -320,6 +320,7 @@
                           </div>
                         </div>
                     </div>
+                    
                     <div class="card shadow mb-4" style="margin-top: 20px;">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -331,16 +332,18 @@
                                             <th>병원명</th>
                                             <th>원장</th>
                                             <th>내용</th>
+                                            <th class="hidden-col">코드</th>
                                         </tr>
                                     </thead>
                                    <tbody>
-                                    {% for name in hospital_names %}
+                                    {% for obj in hospital %}
                                     <tr data-hospital-id="{{ generate_unique_id() }}">
-                                        <td><input type="date" name="registration_date" required></td>
-                                        <td></td>
-                                        <td class="hospital-name" data-hospital-name="{{ name }}">{{ name }}</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td><input type="date" name="registration_date" required>{{ obj[0] }}</td> <!--등록일자-->
+                                        <td>{{ obj[1] }}</td>                                                      <!--등급-->
+                                        <td>{{ obj[2] }}</td>                                                      <!--병원명-->
+                                        <td>{{ obj[3] }}</td>                                                      <!--원장-->
+                                        <td>{{ obj[4] }}</td>                                                      <!--내용-->
+                                        <td class="hidden-col">{{ obj[5] }}</td>                                   <!--요양기호-->
                                     </tr>
                                     {% endfor %}
                                     </tbody>
@@ -396,7 +399,7 @@
             var tr = $(this).closest("tr");
             if (!tr.is(":first-child") || !tr.closest("thead").length) {
                 var td = tr.children();
-                var code = td.eq(4).text();
+                var code = td.eq(5).text();
                 const s = JSON.stringify(code);
                 alert("클릭한 Row의 모든 데이터: " + tr.text());
                 $.ajax({
@@ -404,7 +407,9 @@
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(s)
+                    
                 });
+                alert(s)
                 window.open('/popup', 'update', 'width=600, height=700, popup=yes');
                 popup.close();
             }
