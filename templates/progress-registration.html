@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <style>.hidden-col { display: none; }.table td.select { cursor:pointer; } 
+    <style>.hidden-col { display: none; }.table td.select { cursor:pointer; }
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1; display: flex; justify-content: center; align-items: center; }
 .modal-content{background-color:#fff;padding:20px;max-width:400px;text-align:center;border:none;border-radius:10px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
 .close{position:absolute;top:10px;right:10px;font-size:25px}
@@ -134,7 +134,7 @@
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button class="btn btn-primary" type="button" style="background-color: #4E73DF;">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
@@ -264,9 +264,10 @@
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <li class="nav-item dropdown no-arrow">
+                            {% if session %}
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Manager</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['user_id'] }}</span>
                                 <img class="img-profile rounded-circle" src="{{ url_for('static', filename='img/undraw_profile.svg') }}">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -276,6 +277,15 @@
                                     Logout
                                 </a>
                             </div>
+                            {% else %}
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('login') }}">
+                                        <button class="btn btn-primary btn-user btn-block" style="background-color: #4E73DF;">Login</button>
+                                    </a>
+                                </li>
+                            </ul>
+                            {% endif %}
                         </li>
 
                     </ul>
@@ -320,7 +330,6 @@
                           </div>
                         </div>
                     </div>
-                    
                     <div class="card shadow mb-4" style="margin-top: 20px;">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -336,7 +345,7 @@
                                         </tr>
                                     </thead>
                                    <tbody>
-                                    {% for obj in hospital %}
+                                   {% for obj in hospital %}
                                     <tr data-hospital-id="{{ generate_unique_id() }}">
                                         <td><input type="date" name="registration_date" required>{{ obj[0] }}</td> <!--등록일자-->
                                         <td>{{ obj[1] }}</td>                                                      <!--등급-->
@@ -407,7 +416,6 @@
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(s)
-                    
                 });
                 alert(s)
                 window.open('/popup', 'update', 'width=600, height=700, popup=yes');
@@ -523,7 +531,7 @@ var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(
         });
     });
 
-#TEST
+
         function displayResults(results) {
             if (results.length > 0) {
                 hospitalSearchResults.innerHTML = "";
