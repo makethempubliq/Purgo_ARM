@@ -36,8 +36,9 @@ db = pymysql.connect(
     charset='utf8'
 )
 sql1 = 'select H.yadmNm, H.clCdNm, substring_index(H.addr, \' \', 2), ifnull(D.hospital_Director, \'미입력\'), H.ykiho from Hospital as H inner join hospital_Detail as D where H.ykiho = D.ykiho'
+sql2 = 'select D.recent_Visiting, D.hospital_Rank, H.yadmNm, D.hospital_Director, D.meeting_Detail, D.ykiho from Hospital as H inner join hospital_Detail as D where H.ykiho = D.ykiho'
 
-
+# select D.recent_Visiting, D.hospital_Rank, D.hospital_Director, D.meeting_Detail, D.ykiho from Hospital as H inner join hospital_Detail as D where H.ykiho = D.ykiho and H.ykiho = '해당병원 요양기호';
 cursor = db.cursor()
 
 def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 가져와 초기화 시킨 후 객체변수를 리턴하는 함수
@@ -175,7 +176,18 @@ def getinform():
 
     #print(data_list)
     #cursor.close()
+    return data_list
 
+def get_R_inform():
+    cursor.execute(sql2)
+
+    data = cursor.fetchall()
+    data_list = []
+    for obj in data:
+        data_list.append(obj)
+
+    #print(data_list)
+    #cursor.close()
     return data_list
 
 
@@ -192,6 +204,8 @@ def get_hospital_names():
 
 def getPinform():
 
+    print("여기는 Pinform ")
+    print(code)
     Masters = masters_init()
     return Masters
 
