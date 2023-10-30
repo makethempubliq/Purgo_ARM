@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm
-from information import getinform, set_code, getPinform, p_update,get_hospital_names
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names
 from flask_sqlalchemy import SQLAlchemy
 
 import config
@@ -60,13 +60,13 @@ def hospital_information():
 
 @app.route('/progress-registration.html')
 def progress_registration():
-    hospital_names = get_hospital_names()
-    return render_template('progress-registration.html',hospital_names=hospital_names)
+    print("여긴 start")
+    return render_template('progress-registration.html',hospital = get_R_inform())
 
 @app.route('/progress-confirmation.html')
 def progress_confirmation():
-    hospital_names = get_hospital_names()
-    return render_template('progress-confirmation.html', hospital_names=hospital_names)
+   
+    return render_template('progress-confirmation.html', hospital_rinform = getinform())
 
 @app.route('/manager-function.html')
 def manager_function():
@@ -154,7 +154,8 @@ def popup_function():
 @app.route('/test', methods=['POST'])
 def test():
     output = request.get_json()
-
+    print("output")
+    print(output)
     set_code(output) #여기서 코드값 inform.py로 넘긴다
     return ('', 204)
 
