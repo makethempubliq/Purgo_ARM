@@ -304,14 +304,14 @@
                               <tr>
                                 <td class="hospital-name" data-hospital-name="병원명">병원명: </td>
                                 <td>
-                                 <input type="text" id="hospitalSearch" placeholder="병원명 검색">
+                                 <input type="text" name="hospitalName" id="hospitalSearch" placeholder="병원명 검색">
                                     <div id="hospitalSearchResults" class="search-results"></div>
                                 </td>
                               </tr>
                               <tr>
                                 <td>등급 :</td>
                                 <td>
-                                  <select id="gradeSelect">
+                                  <select name="grade" id="gradeSelect">
                                       <option value="Act">Act</option>
                                       <option value="Bestcase">Bestcase</option>
                                       <option value="Opportunity">Opportunity</option>
@@ -323,7 +323,7 @@
                               <tr>
                                 <td>내용 :</td>
                                 <td>
-                                  <textarea id="contentTextarea" rows="2" cols="20"></textarea>
+                                  <textarea name="content" id="contentTextarea" rows="2" cols="20"></textarea>
                                 </td>
                               </tr>
                             </table>
@@ -482,37 +482,38 @@ window.addEventListener("click", function(event) {
 
 // 저장 버튼
 document.getElementById("saveButton").addEventListener("click", function () {
-    const hospitalName = document.querySelector(".hospital-name").getAttribute("data-hospital-name");
+    const hospitalName = document.getElementById("hospitalSearch").value;
     const grade = document.getElementById("gradeSelect").value;
     const content = document.getElementById("contentTextarea").value;
 
-    // API 호출
+    console.log("hospitalName:", hospitalName);
+    console.log("grade:", grade);
+    console.log("content:", content);
+
+    const form = new FormData();
+    form.append("hospitalName", hospitalName);
+    form.append("grade", grade);
+    form.append("content", content);
+
     fetch('/save_data', {
         method: 'POST',
-        body: new URLSearchParams({ hospitalName, grade, content }),
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        body: form,
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === "Data saved successfully") {
-                // 데이터 저장이 성공한 경우
-                closeModal(); // 모달 창 닫기
-            } else {
-                // 데이터 저장이 실패한 경우
-                alert("저장 중 오류가 발생했습니다.");
-            }
-        })
-        .catch(error => {
-            console.error(error);
-        });
-});
+    .then(response => response.json())
+    .then(data => {
+        console.log("Server Response:", data);
 
-// 모달 닫기 함수
-function closeModal() {
-    document.getElementById("myModal").style.display = "none";
-}
+        if (data.message === "데이터가 성공적으로 업데이트되었습니다") {
+            alert("데이터가 성공적으로 업데이트되었습니다");
+        } else if (data.error) {
+            alert("데이터 저장 중 오류가 발생했습니다: " + data.error);
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert("데이터 저장 중 오류가 발생했습니다: " + error.message);
+    });
+});
 
 // 병원명 검색
 var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(function(nameElement) {
