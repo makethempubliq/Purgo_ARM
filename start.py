@@ -8,6 +8,11 @@ from loginregister import UserCreateForm, UserLoginForm
 from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names
 from flask_sqlalchemy import SQLAlchemy
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+import bs4
+import requests
+
 import config
 
 
@@ -22,6 +27,46 @@ db = pymysql.connect(
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
 app.config.from_object(config)
 
+def scheduled_task():
+    db = pymysql.connect(host='purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com', user='armteam',
+                         passwd='purgo1234', db='purgo_ARM_DB', charset='utf8')
+
+    cursor = db.cursor()
+    clCD = ['01', '11', '41', '51']
+    for i in clCD:
+        url1 = f'https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList?ServiceKey=pxp83Ms51yvx5MQYAGnfLSJndXx1bi0W1j6n8ul13Ty%2FoDJK3tzJJnpK6Q1ProOguWEpr9c6igNbZnefE8qnbg%3D%3D&numOfRows=100000&clCd={i}'
+        response = requests.get(url1)
+        content = response.text
+        xml_obj = bs4.BeautifulSoup(content, 'lxml-xml')
+        rows = xml_obj.findAll('item')
+        # xml 안의 데이터 수집
+        for i in range(0, len(rows)):
+            columns = rows[i].find_all()
+            # 첫째 행 데이터 수집
+            text1 = ''
+            text2 = ''
+            text3 = ''
+            for j in range(0, len(columns)):
+                text1 = text1 + columns[j].name + ', '
+                text2 = text2 + '\"' + columns[j].text + '\"' + ', '
+                if columns[j].name != 'ykiho':
+                    text3 = text3 + " " + columns[j].name + " = VALUES(" + columns[j].name + "),"
+            text1 = text1[:len(text1) - 2]
+            text2 = text2[:len(text2) - 2]
+            text3 = text3[:len(text3) - 1]
+            sql1 = f"INSERT Into Hospital({text1}) VALUES ({text2}) ON DUPLICATE KEY UPDATE {text3}"
+            cursor.execute(sql1)
+    sql2 = "INSERT IGNORE into hospital_Detail(ykiho) select ykiho from Hospital"
+    cursor.execute(sql2)
+    db.commit()
+    print("Scheduled task executed!")
+
+# APScheduler를 설정하여 매일 정각에 scheduled_task 함수를 실행합니다
+def schedule_task():
+    scheduler = BackgroundScheduler()
+    trigger = CronTrigger(hour=0, minute=0, second=0)  # 매일 00:00:00에 실행
+    scheduler.add_job(scheduled_task, trigger=trigger)
+    scheduler.start()
 
 @app.route('/')
 def index():
@@ -209,4 +254,5 @@ def save_data():
         return jsonify({"message": "Data saving failed"})
 
 if __name__ == '__main__':
+    schedule_task()
     app.run(debug=True)
