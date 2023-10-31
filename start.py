@@ -220,38 +220,41 @@ def get_hospital_names_endpoint():
     return jsonify(hospital_names)
 
 app.jinja_env.globals['generate_unique_id'] = generate_unique_id
+
+def get_ykiho_from_hospital_name(hospital_name):
+    cursor = db.cursor()
+    select_query = "SELECT ykiho FROM Hospital WHERE yadmNm = %s"
+    cursor.execute(select_query, (hospital_name,))
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result:
+        return result[0]  
+    else:
+        return None
+
 @app.route('/save_data', methods=['POST'])
 def save_data():
-    hospital_name = request.form.get('hospitalName')
-    grade = request.form.get('grade')
-    content = request.form.get('content')
-
     try:
-        cursor = db.cursor()
+        hospital_name = request.form.get('hospitalName')
+        grade = request.form.get('grade')
+        content = request.form.get('content')
 
-        hospital_id = get_hospital_names()
+        ykiho = get_ykiho_from_hospital_name(hospital_name)
 
-        if hospital_id is not None:
-            # 병원명이 이미 존재하면 업데이트
-            update_hospital_rank = "UPDATE hospital_Detail SET hospital_Rank = %s WHERE ykiho = %s"
-            cursor.execute(update_hospital_rank, (grade, hospital_id))
-
-            update_meeting_detail = "UPDATE hospital_Detail SET meeting_Detail = %s WHERE ykiho = %s"
-            cursor.execute(update_meeting_detail, (content, hospital_id))
+        if ykiho:
+            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s WHERE ykiho = %s"
+            cursor = db.cursor()
+            cursor.execute(update_query, (grade, content, ykiho))
+            db.commit()
+            cursor.close()
+            return jsonify({"message": "데이터가 성공적으로 업데이트되었습니다"})
         else:
-            # 병원명이 존재하지 않으면 새로 삽입
-            insert_hospital_rank = "INSERT INTO hospital_Detail (ykiho, hospital_Rank) VALUES (%s, %s)"
-            cursor.execute(insert_hospital_rank, (hospital_id, grade))
+            return jsonify({"message": "해당 병원명이 존재하지 않습니다."})
 
-            insert_meeting_detail = "INSERT INTO hospital_Detail (ykiho, meeting_Detail) VALUES (%s, %s)"
-            cursor.execute(insert_meeting_detail, (hospital_id, content))
-
-        db.commit()
-        cursor.close()
-        return jsonify({"message": "Data saved successfully"})
     except Exception as e:
-        print(f"데이터 저장 중 오류 발생: {e}")
-        return jsonify({"message": "Data saving failed"})
+        print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
+        return jsonify({"error": "데이터 저장 중 오류가 발생했습니다: "})
 
 if __name__ == '__main__':
     schedule_task()
