@@ -129,9 +129,16 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
+        db = pymysql.connect(
+            host='purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com',
+            user='armteam',
+            passwd='purgo1234',
+            db='purgo_ARM_DB',
+            charset='utf8'
+        )
         cursor = db.cursor()
-        #cursor.execute(f"select * from master_User where user_Email = \'{user_id}\'")
-        #g.user = cursor.fetchall()
+        cursor.execute(f"select * from master_User where user_Email = \'{user_id}\'")
+        g.user = cursor.fetchone()
         cursor.close()
 
 
