@@ -111,7 +111,7 @@ def progress_registration():
 @app.route('/progress-confirmation.html')
 def progress_confirmation():
    
-    return render_template('progress-confirmation.html', hospital_rinform = getinform())
+    return render_template('progress-confirmation.html', hospital_names = get_hospital_names())
 
 @app.route('/manager-function.html')
 def manager_function():

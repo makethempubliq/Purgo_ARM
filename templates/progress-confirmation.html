@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <style>.hidden-col { display: none; }.table td.select { cursor:pointer; } </style>
     <style>.hospital-name {cursor: pointer;} </style>
 
     <title>Purgo=process-confirmation</title>
@@ -295,15 +296,16 @@
                                         </tr>
                                     </thead>
                                    <tbody>
-                                {% for name in hospital_names %}
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="hospital-name" data-hospital-name="{{ name }}">{{ name }}</td> <!-- 병원명만 표시 -->
-                                        <td></td>
-                                    </tr>
+                                {% for obj in hospital_names %}
+                                <tr>
+                                    <td>{{ obj[0] }}</td>                                                      <!--등급-->
+                                    <td>{{ obj[1] }}</td>                                                      <!--병원명-->
+                                    <td>{{ obj[2] }}</td>                                                      <!--원장-->
+                                    <td>{{ obj[3] }}</td>                                                      <!--내용-->
+                                    <td>{{ obj[4] }}</td>                                                      <!--원장-->
+                                    <td>{{ obj[5] }}</td>                                                      <!--내용-->
+                                    <td class="hidden-col">{{ obj[6] }}</td>                                   <!--요양기호-->
+                                </tr>
                                 {% endfor %}
                             </tbody>
                                 </table>
