@@ -243,9 +243,9 @@ def save_data():
         ykiho = get_ykiho_from_hospital_name(hospital_name)
 
         if ykiho:
-            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s WHERE ykiho = %s"
+            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s, hospital_manager = %s WHERE ykiho = %s"
             cursor = db.cursor()
-            cursor.execute(update_query, (grade, content, ykiho))
+            cursor.execute(update_query, (grade, content, g.user[1], ykiho))
             db.commit()
             cursor.close()
             return jsonify({"message": "데이터가 성공적으로 업데이트되었습니다"})
