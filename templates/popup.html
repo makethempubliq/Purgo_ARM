@@ -13,7 +13,6 @@
     width: auto;}
 </style>
 
-    
     <title>Purgo-popup</title>
 
     <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -146,6 +145,11 @@
     <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
 
 <script>
+    window.addEventListener('unload', window.opener.location.reload());
+    
+   
+    
+
     document.addEventListener("DOMContentLoaded", function () {
         const collegeSelect = document.getElementById('collegeSelect');
         const majorSelect = document.getElementById('majorSelect');
