@@ -256,6 +256,30 @@ def save_data():
         print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
         return jsonify({"error": "데이터 저장 중 오류가 발생했습니다: "})
 
+def fetch_hospital_data_from_db():
+    with db.cursor() as cursor:
+        select_sql = "SELECT * FROM Hospital_Detail"
+        cursor.execute(select_sql)
+        hospital_data = cursor.fetchall()
+    return hospital_data
+
+@app.route('/update_registration_date', methods=['POST'])
+def update_registration_date():
+    selected_date = request.form.get('registration_date')
+    selected_ykiho = request.form.get('ykiho')
+
+    try:
+        with db.cursor() as cursor:
+            update_sql = "UPDATE hospital_Detail SET recent_Visiting = %s WHERE ykiho = %s"
+            cursor.execute(update_sql, (selected_date, selected_ykiho))
+            db.commit()
+            return jsonify({"message": "날짜가 성공적으로 저장되었습니다"})
+    except pymysql.Error as e:
+        db.rollback()
+        return jsonify({"error": f"데이터베이스 오류: {str(e)}"})
+    except Exception as e:
+        return jsonify({"error": f"서버 오류: {str(e)}"})
+
 if __name__ == '__main__':
     schedule_task()
     app.run(debug=True)
