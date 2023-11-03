@@ -5,7 +5,8 @@ from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm
-from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update
+
 from flask_sqlalchemy import SQLAlchemy
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -74,25 +75,23 @@ def index():
 
 @app.route('/master-school.html')
 def master_school():
-    return render_template('master-school.html')
+    return render_template('master-school.html', sm_master = getSMinform())
     
-
-
 @app.route('/master-major.html')
 def master_major():
-    return render_template('master-major.html')
+    return render_template('master-major.html', mj_master = getMJ_inform())
 
 @app.route('/master-grade.html')
 def master_grade():
-    return render_template('master-grade.html')
+    return render_template('master-grade.html', rk_master = getRK_inform())
 
 @app.route('/master-competition.html')
 def master_competition():
-    return render_template('master-competition.html')
+    return render_template('master-competition.html', cp_master = getCP_inform())
 
 @app.route('/master-product.html')
 def master_product():
-    return render_template('master-product.html')
+    return render_template('master-product.html', pd_master = getPD_inform())
 
 @app.route('/master-information.html')
 def master_information():
@@ -105,7 +104,6 @@ def hospital_information():
 
 @app.route('/progress-registration.html')
 def progress_registration():
-    print("여긴 start")
     return render_template('progress-registration.html',hospital = get_R_inform())
 
 @app.route('/progress-confirmation.html')
@@ -232,6 +230,15 @@ def get_ykiho_from_hospital_name(hospital_name):
         return result[0]  
     else:
         return None
+
+@app.route('/save_data_sm', methods=['POST'])
+def save_data_sm():
+    print("테스트문구:")
+    jso = master_update(request.form.get('name'),request.form.get('pagdesc'))
+    return jsonify({"message": jso})      
+       
+    
+
 
 @app.route('/save_data', methods=['POST'])
 def save_data():
