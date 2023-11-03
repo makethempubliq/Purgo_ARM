@@ -84,7 +84,7 @@
                 <td>
                     <select id="responSelect" name="Manager">
                         <option value="{{ P_hospital.sql8[0][0] }}">{{ P_hospital.sql8[0][0] }}</option>
-                    {% for obj in P_hospital.sql8 %}
+                    {% for obj in P_hospital.Manager %}
                         <option value="{{ obj[0] }}">{{ obj[0] }}</option>
                     {% endfor %}
                     </select>
