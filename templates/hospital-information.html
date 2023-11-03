@@ -387,6 +387,8 @@
     let rowIndex;
     let cellIndex;
 
+    
+
     function getIndex() {
         // 첫 번째 열 클릭 시에 실행
         $("#example tbody tr td:first-child").on("click", function () {
@@ -402,12 +404,20 @@
                     contentType: "application/json",
                     data: JSON.stringify(s)
                 });
-                window.open('/popup', 'update', 'width=600, height=700, popup=yes');
+                window.open('/popup', 'update', 'width=600, height=700, popup=yes')
                 popup.close();
+                
+                  
             }
+            
+            
         });
+        
     }
 
+    function test(){
+        alert('테스트')
+    }
     // 페이지 로딩 시 클릭 이벤트 등록
     getIndex();
 
