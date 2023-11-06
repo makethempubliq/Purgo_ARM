@@ -306,6 +306,23 @@ document.addEventListener('DOMContentLoaded', function () {
     var modalBody = document.getElementById('modalBody');
     var dataRowTemplate = document.querySelector('.data-row');
 
+    var currentDate = new Date();
+
+    rows.forEach(function(row, index) {
+        var lastRegistrationCell = row.cells[1].textContent; // 마지막 등록 날짜 가져오기
+
+        // 날짜 형식이 'yyyy-mm-dd'이라고 가정
+        var lastRegistrationDate = new Date(lastRegistrationCell);
+
+        var threeMonthsAgo = new Date(currentDate);
+        threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
+
+        if (lastRegistrationDate < threeMonthsAgo) {
+            // 날짜가 3개월 이상 오래될 때 셀 스타일 변경
+            row.cells[1].style.color = 'red'; // 마지막 등록 셀의 텍스트 색을 빨간색으로 변경
+        }
+    });
+
     rows.forEach(function(row, index) {
         row.addEventListener('click', function() {
             var ykiho = row.cells[7].textContent; // 테이블에서 요양기호 데이터 가져오기
@@ -337,15 +354,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             newRow.querySelector('.modalStatus').textContent = logData[1];
                             newRow.querySelector('.modalContent').textContent = logData[2];
 
-                            // 날짜 비교
-                            var logDate = new Date(logData[0]);
-                            var threeMonthsAgo = new Date(currentDate);
-                            threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
-
-                            if (logDate < threeMonthsAgo) {
-                                // 날짜가 3개월 이상 오래될 때 스타일 변경
-                                newRow.querySelector('.modalDate').style.color = 'red';
-                            }
 
                             // 행을 모달에 추가
                             modalBody.appendChild(newRow);
