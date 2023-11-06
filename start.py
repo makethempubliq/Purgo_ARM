@@ -75,44 +75,88 @@ def index():
 
 @app.route('/master-school.html')
 def master_school():
-    return render_template('master-school.html', sm_master = getSMinform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('master-school.html', sm_master=getSMinform())
+
     
 @app.route('/master-major.html')
 def master_major():
-    return render_template('master-major.html', mj_master = getMJ_inform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('master-major.html', mj_master = getMJ_inform())
 
 @app.route('/master-grade.html')
 def master_grade():
-    return render_template('master-grade.html', rk_master = getRK_inform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('master-grade.html', rk_master = getRK_inform())
 
 @app.route('/master-competition.html')
 def master_competition():
-    return render_template('master-competition.html', cp_master = getCP_inform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('master-competition.html', cp_master = getCP_inform())
 
 @app.route('/master-product.html')
 def master_product():
-    return render_template('master-product.html', pd_master = getPD_inform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('master-product.html', pd_master = getPD_inform())
 
 @app.route('/master-information.html')
 def master_information():
-    return render_template('master-information.html')
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('master-information.html')
 
 @app.route('/hospital-information.html')
 def hospital_information():
-    
-    return render_template('hospital-information.html',hospital = getinform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('hospital-information.html',hospital = getinform())
 
 @app.route('/progress-registration.html')
 def progress_registration():
-    return render_template('progress-registration.html',hospital = get_R_inform())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('progress-registration.html',hospital = get_R_inform())
 
 @app.route('/progress-confirmation.html')
 def progress_confirmation():
-    return render_template('progress-confirmation.html', hospital_names = get_hospital_names())
+    if not g.user :
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else :
+        return render_template('progress-confirmation.html', hospital_names = get_hospital_names())
 
 @app.route('/manager-function.html')
 def manager_function():
-    return render_template('manager-function.html')
+    if not g.user:
+        flash("로그인이 필요한 기능입니다.")
+        return redirect(url_for('login'))
+    else:
+        if g.user[5] == '관리자':
+            return render_template('manager-function.html')
+        else :
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/login.html', methods=('GET', 'POST'))
 def login():
