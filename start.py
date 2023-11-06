@@ -108,7 +108,6 @@ def progress_registration():
 
 @app.route('/progress-confirmation.html')
 def progress_confirmation():
-   
     return render_template('progress-confirmation.html', hospital_names = get_hospital_names())
 
 @app.route('/manager-function.html')
@@ -237,8 +236,17 @@ def save_data_sm():
     jso = master_update(request.form.get('name'),request.form.get('pagdesc'))
     return jsonify({"message": jso})      
        
-    
-
+@app.route('/get_Log_inform', methods=['POST'])
+def get_Log_inform(): #로그 불러오기
+    cursor = db.cursor()
+    ykiho = request.form.get('ykiho')
+    sql_log = "select meeting_Date, hospital_Rank, meeting_Detail from meeting_Log where ykiho = %s"
+    cursor.execute(sql_log, (ykiho, ))
+    data = cursor.fetchall()
+    data_list = []
+    for obj in data:
+        data_list.append(obj)
+    return data_list
 
 @app.route('/save_data', methods=['POST'])
 def save_data():

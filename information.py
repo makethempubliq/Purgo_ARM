@@ -199,8 +199,8 @@ def get_R_inform():
 
 
 def get_hospital_names():
-    cursor.execute("""select D.hospital_Rank, D.recent_Visiting, D.user_Dept, D.user_Email, H.yadmNm, D.meeting_Detail, H.ykiho
-from (select hospital_Rank, recent_Visiting, user_Dept, user_Email, meeting_Detail, ykiho from hospital_Detail left join master_User on user_Email = hospital_manager) as D
+    cursor.execute("""select D.hospital_Rank, D.recent_Visiting, D.user_Dept, D.user_Name, H.yadmNm, D.meeting_Detail, D.user_Email, H.ykiho
+from (select hospital_Rank, recent_Visiting, user_Dept, user_Email, meeting_Detail, ykiho, user_Name from hospital_Detail left join master_User on user_Email = hospital_manager) as D
  inner join Hospital as H on D.ykiho = H.ykiho where user_Email is not null""")
     data = cursor.fetchall()
 
@@ -412,6 +412,8 @@ def Hinform_Upadate():
     #print(data_list)
     #cursor.close()
     return data_list
+
+
 #17:33:42	update hospital_Detail set hospital_Director = '조석훈' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	1 row(s) affected Rows matched: 1  Changed: 1  Warnings: 0	0.015 sec
 #17:33:21	update hospital_Detail set hospital_Director = '조석훈', hospital_competitor = 'Allo-Oss' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`purgo_ARM_DB`.`hospital_Detail`, CONSTRAINT `hospital_Detail_ibfk_6` FOREIGN KEY (`hospital_competitor`) REFERENCES `master_Competitor` (`competitor_Name`))	0.016 sec
 # 대학, 전공, 등급, 제품, 경쟁업체

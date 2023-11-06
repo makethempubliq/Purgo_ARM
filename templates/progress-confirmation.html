@@ -211,22 +211,23 @@ table{border:2px solid #CFE2FF;border-collapse:collapse;width:100%border-radius:
                                             <th>구분</th>
                                             <th>담당자</th>
                                             <th>병원명</th>
-                                            <th>내용</th>
+                                            <th class="select" data-modal-content="내용">내용</th>
                                             <th class="hidden-col">이메일</th>
                                             <th class="hidden-col">코드</th>
                                         </tr>
                                     </thead>
-                                   <tbody>
+                                    <!-- 표의 본문 부분 -->
+                                    <tbody>
                                         {% for obj in hospital_names %}
                                         <tr>
-                                            <td>{{ obj[0] }}</td>                                                      <!--상태-->
-                                            <td>{{ obj[1] }}</td>                                                      <!--마지막등록-->
-                                            <td>{{ obj[2] }}</td>                                                      <!--부서-->
-                                            <td>{{ obj[3] }}</td>                                                      <!--담당자-->
-                                            <td>{{ obj[4] }}</td>                                                      <!--병원명-->
-                                            <td class="select" data-modal-content="{{ obj[5] }}">{{ obj[5] }}</td>                <!--내용-->
-                                            <td class="hidden-col">{{ obj[6] }}</td>                                   <!--이메일-->
-                                            <td class="hidden-col">{{ obj[7] }}</td>                                   <!--요양기호-->
+                                            <td>{{ obj[0] }}</td>
+                                            <td>{{ obj[1] }}</td>
+                                            <td>{{ obj[2] }}</td>
+                                            <td>{{ obj[3] }}</td>
+                                            <td>{{ obj[4] }}</td>
+                                            <td class="select" data-modal-content="{{ obj[5] }}">{{ obj[5] }}</td>
+                                            <td class="hidden-col">{{ obj[6] }}</td>
+                                            <td class="hidden-col">{{ obj[7] }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -244,11 +245,12 @@ table{border:2px solid #CFE2FF;border-collapse:collapse;width:100%border-radius:
                                                 <th style="font-weight: bold; font-size: 16px;">내용</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td id="modalDate" style="font-size: 16px;"></td>
-                                                <td id="modalStatus" style="font-size: 16px;"></td>
-                                                <td id="modalContent" style="font-size: 16px;"></td>
+                                        <tbody id="modalBody">
+                                            <!-- 템플릿 행, 데이터를 여기에 채움 -->
+                                            <tr class="data-row" style="display: none;">
+                                                <td class="modalDate" style="font-size: 16px;"></td>
+                                                <td class="modalStatus" style="font-size: 16px;"></td>
+                                                <td class="modalContent" style="font-size: 16px;"></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -298,38 +300,64 @@ table{border:2px solid #CFE2FF;border-collapse:collapse;width:100%border-radius:
     <script src="../static/js/app.js"></script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    const selectElements = document.querySelectorAll('.select');
-    const modal = document.getElementById('myModal');
-    const modalDate = document.getElementById('modalDate');
-    const modalStatus = document.getElementById('modalStatus');
-    const modalContent = document.getElementById('modalContent');
-    const closeModalButton = document.getElementById('closeModal');
+    document.addEventListener('DOMContentLoaded', function () {
+    var rows = document.querySelectorAll('#example tbody tr');
+    var modal = document.getElementById('myModal');
+    var modalBody = document.getElementById('modalBody');
+    var dataRowTemplate = document.querySelector('.data-row');
 
-    selectElements.forEach(function(element) {
-        element.addEventListener('click', function() {
-        const content = element.getAttribute('data-modal-content');
-        const date = element.closest('tr').querySelector('td:nth-child(2)').textContent;
-        const status = element.closest('tr').querySelector('td:first-child').textContent;
+    rows.forEach(function(row, index) {
+        row.addEventListener('click', function() {
+            var ykiho = row.cells[7].textContent; // 테이블에서 요양기호 데이터 가져오기
 
-        modalDate.textContent = date;
-        modalStatus.textContent = status;
-        modalContent.textContent = content;
+            // 모달 열기
+            modal.style.display = 'block';
 
-        modal.style.display = 'block';
+            // 데이터 가져오기
+            $.ajax({
+                url: '/get_Log_inform',
+                method: 'POST',
+                data: { 'ykiho': ykiho },
+                success: function(data) {
+                    if (data.length > 0) {
+                        // 이전 데이터 삭제
+                        modalBody.innerHTML = '';
+
+                        // 데이터 순회
+                        data.forEach(function(logData) {
+                            // 데이터 행 복제
+                            var newRow = dataRowTemplate.cloneNode(true);
+                            newRow.style.display = 'table-row'; // 보이도록 설정
+
+                            // 모달 내부의 요소에 데이터 설정
+                            newRow.querySelector('.modalDate').textContent = logData[0];
+                            newRow.querySelector('.modalStatus').textContent = logData[1];
+                            newRow.querySelector('.modalContent').textContent = logData[2];
+
+                            // 행을 모달에 추가
+                            modalBody.appendChild(newRow);
+                        });
+                    } else {
+                        // 데이터가 없을 때 처리
+                        console.log('데이터가 없습니다.');
+                    }
+                },
+                error: function(error) {
+                    // 오류 처리
+                    console.error('데이터를 가져오는 중 오류가 발생했습니다: ' + error.statusText);
+                }
+            });
         });
     });
 
-    closeModalButton.addEventListener('click', function() {
+    // 모달 닫기 버튼
+    document.getElementById('closeModal').addEventListener('click', function() {
         modal.style.display = 'none';
-    });
 
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-        modal.style.display = 'none';
-        }
+        // 모달 내부 데이터 초기화
+        modalBody.innerHTML = '';
     });
-    });
+});
     </script>
 </body>
 
