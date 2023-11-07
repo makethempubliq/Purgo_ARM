@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template
+from flask import Flask, request, send_from_directory, render_template, jsonify, g
 from typing import List
 from dataclasses import dataclass, field, astuple
 #from flaskext.mysql import MySQL
@@ -225,6 +225,9 @@ def get_progress(email, rank):
 
     return progress
 
+
+
+
 def getPinform():
 
     print("여기는 Pinform ")
@@ -425,6 +428,42 @@ def Hinform_Upadate():
     #cursor.close()
     return data_list
 
+
+def get_ykiho_from_hospital_name(hospital_name):
+    cursor = db.cursor()
+    select_query = "SELECT ykiho FROM Hospital WHERE yadmNm = %s"
+    cursor.execute(select_query, (hospital_name,))
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result:
+        return result[0]  
+    else:
+        return None
+    
+
+def save_data(hospitalName, grade, content):
+    try:
+        hospital_name = request.form.get('hospitalName')
+        grade = request.form.get('grade')
+        content = request.form.get('content')
+        
+        ykiho = get_ykiho_from_hospital_name(hospital_name)
+
+        if ykiho:
+            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s, hospital_manager = %s WHERE ykiho = %s"
+            insert_query = "INSERT into meeting_Log(hospital_Rank, meeting_Detail, meeting_Date, meeting_ManagerID, ykiho) select %s, %s, recent_Visiting, %s, %s from hospital_Detail where ykiho = %s"
+            cursor = db.cursor()
+            cursor.execute(update_query, (grade, content, g.user[3], ykiho))
+            cursor.execute(insert_query, (grade, content, g.user[3], ykiho, ykiho))
+            db.commit()
+            cursor.close()
+
+            return "데이터가 성공적으로 업데이트되었습니다"
+
+    except Exception as e:
+        print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
+        return "데이터 저장 중 오류가 발생했습니다"
 
 #17:33:42	update hospital_Detail set hospital_Director = '조석훈' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	1 row(s) affected Rows matched: 1  Changed: 1  Warnings: 0	0.015 sec
 #17:33:21	update hospital_Detail set hospital_Director = '조석훈', hospital_competitor = 'Allo-Oss' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`purgo_ARM_DB`.`hospital_Detail`, CONSTRAINT `hospital_Detail_ibfk_6` FOREIGN KEY (`hospital_competitor`) REFERENCES `master_Competitor` (`competitor_Name`))	0.016 sec
