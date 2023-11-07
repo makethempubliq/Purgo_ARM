@@ -198,7 +198,16 @@ def get_R_inform():
     return data_list
 
 
-def get_hospital_names(email, rank):
+def get_hospital_names():
+    cursor.execute(sql1)
+    data = cursor.fetchall()
+
+    # 병원명만 추출하여 리스트로 저장
+    hospital_names = [obj[0] for obj in data]
+
+    return hospital_names
+
+def get_progress(email, rank):
     if rank == '관리자' :
         cursor.execute("""select D.hospital_Rank, D.recent_Visiting, D.user_Dept, D.user_Name, H.yadmNm, D.meeting_Detail, D.user_Email, H.ykiho
         from (select hospital_Rank, recent_Visiting, user_Dept, user_Email, meeting_Detail, ykiho, user_Name from hospital_Detail left join master_User on user_Email = hospital_manager) as D
@@ -210,13 +219,11 @@ def get_hospital_names(email, rank):
     data = cursor.fetchall()
 
     # 병원명만 추출하여 리스트로 저장
-    hospital_names = []
+    progress = []
     for obj in data:
-        hospital_names.append(obj)
+        progress.append(obj)
 
-    return hospital_names
-
-
+    return progress
 
 def getPinform():
 

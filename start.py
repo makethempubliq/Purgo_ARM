@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm
-from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -144,7 +144,7 @@ def progress_confirmation():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('progress-confirmation.html', hospital_names = get_hospital_names(g.user[3], g.user[5]))
+        return render_template('progress-confirmation.html', progress = get_progress(g.user[3], g.user[5]))
 
 @app.route('/manager-function.html')
 def manager_function():
