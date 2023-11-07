@@ -362,7 +362,7 @@ table{border:2px solid #CFE2FF;border-collapse:collapse;width:100%;border-radius
     rows.forEach(function(row, index) {
         row.addEventListener('click', function() {
             var ykiho = row.cells[7].textContent; // 테이블에서 요양기호 데이터 가져오기
-
+            var email = row.cells[6].textContent;
             // 모달 열기
             modal.style.display = 'block';
 

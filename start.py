@@ -144,7 +144,7 @@ def progress_confirmation():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('progress-confirmation.html', hospital_names = get_hospital_names())
+        return render_template('progress-confirmation.html', hospital_names = get_hospital_names(g.user[3], g.user[5]))
 
 @app.route('/manager-function.html')
 def manager_function():
