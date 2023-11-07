@@ -227,7 +227,7 @@
                                             <th class="hidden-col">코드</th>
                                         </tr>
                                     </thead>
-                                   <tbody>
+                                    <tbody id="hospitalTableBody">
                                    {% for obj in hospital %}
                                     <tr data-hospital-id="{{ generate_unique_id() }}">
                                         <td>
@@ -358,6 +358,7 @@ document.getElementById("openModalButton").addEventListener("click", function() 
 
 document.getElementById("closeModalButton").addEventListener("click", function() {
   document.getElementById("myModal").style.display = "none";
+  window.location.href = "/progress-registration.html";
 });
 
 window.addEventListener("click", function(event) {
@@ -400,6 +401,7 @@ document.getElementById("saveButton").addEventListener("click", function () {
         alert("데이터 저장 중 오류가 발생했습니다: " + error.message);
     });
 });
+
 
 // 병원명 검색
 var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(function(nameElement) {
