@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm
-from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -262,23 +262,13 @@ def get_hospital_names_endpoint():
 
 app.jinja_env.globals['generate_unique_id'] = generate_unique_id
 
-def get_ykiho_from_hospital_name(hospital_name):
-    cursor = db.cursor()
-    select_query = "SELECT ykiho FROM Hospital WHERE yadmNm = %s"
-    cursor.execute(select_query, (hospital_name,))
-    result = cursor.fetchone()
-    cursor.close()
-
-    if result:
-        return result[0]  
-    else:
-        return None
 
 @app.route('/save_data_sm', methods=['POST'])
 def save_data_sm():
     print("테스트문구:")
     jso = master_update(request.form.get('name'),request.form.get('pagdesc'))
-    return jsonify({"message": jso})      
+    return jsonify({"message": jso})  
+
        
 @app.route('/get_Log_inform', methods=['POST'])
 def get_Log_inform(): #로그 불러오기
@@ -293,29 +283,20 @@ def get_Log_inform(): #로그 불러오기
     return data_list
 
 @app.route('/save_data', methods=['POST'])
-def save_data():
+def save_data_route():
+    hospitalName = request.form.get('hospitalName')
+    grade = request.form.get('grade')
+    content = request.form.get('content')
+    
     try:
-        hospital_name = request.form.get('hospitalName')
-        grade = request.form.get('grade')
-        content = request.form.get('content')
-
-        ykiho = get_ykiho_from_hospital_name(hospital_name)
-
-        if ykiho:
-            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s, hospital_manager = %s WHERE ykiho = %s"
-            insert_query = "INSERT into meeting_Log(hospital_Rank, meeting_Detail, meeting_Date, meeting_ManagerID, ykiho) select %s, %s, recent_Visiting, %s, %s from hospital_Detail where ykiho = %s"
-            cursor = db.cursor()
-            cursor.execute(update_query, (grade, content, g.user[3], ykiho))
-            cursor.execute(insert_query, (grade, content, g.user[3], ykiho, ykiho))
-            db.commit()
-            cursor.close()
-            return jsonify({"message": "데이터가 성공적으로 업데이트되었습니다"})
+        result = save_data(hospitalName, grade, content)
+        if result == "데이터가 성공적으로 업데이트되었습니다":
+            return jsonify({"message": result})
         else:
-            return jsonify({"message": "해당 병원명이 존재하지 않습니다."})
-
+            return jsonify({"error": result})
     except Exception as e:
-        print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
-        return jsonify({"error": "데이터 저장 중 오류가 발생했습니다: "})
+        error_message = str(e)
+        return jsonify({"error": "데이터 저장 또는 업데이트 중 오류 발생: " + error_message})
 
 def fetch_hospital_data_from_db():
     with db.cursor() as cursor:
@@ -323,6 +304,7 @@ def fetch_hospital_data_from_db():
         cursor.execute(select_sql)
         hospital_data = cursor.fetchall()
     return hospital_data
+
 
 @app.route('/update_registration_date', methods=['POST'])
 def update_registration_date():
