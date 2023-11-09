@@ -442,25 +442,26 @@ def get_ykiho_from_hospital_name(hospital_name):
         return None
     
 
-def save_data(hospitalName, grade, content):
+def save_data(hospitalName, grade, content, registration_date):
     try:
         hospital_name = request.form.get('hospitalName')
         grade = request.form.get('grade')
         content = request.form.get('content')
+        registration_date = request.form.get('registration_date')  
         
-        ykiho = get_ykiho_from_hospital_name(hospital_name)
+        ykiho = get_ykiho_from_hospital_name(hospitalName)
 
         if ykiho:
-            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s, hospital_manager = %s WHERE ykiho = %s"
-            insert_query = "INSERT into meeting_Log(hospital_Rank, meeting_Detail, meeting_Date, meeting_ManagerID, ykiho) select %s, %s, recent_Visiting, %s, %s from hospital_Detail where ykiho = %s"
+            update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s, recent_Visiting = %s, hospital_manager = %s WHERE ykiho = %s"
+            insert_query = "INSERT into meeting_Log(hospital_Rank, meeting_Detail, meeting_Date, meeting_ManagerID, ykiho) select %s, %s, %s, %s, %s from hospital_Detail where ykiho = %s"
             cursor = db.cursor()
-            cursor.execute(update_query, (grade, content, g.user[3], ykiho))
-            cursor.execute(insert_query, (grade, content, g.user[3], ykiho, ykiho))
+            cursor.execute(update_query, (grade, content, registration_date, g.user[3], ykiho))
+            cursor.execute(insert_query, (grade, content, registration_date, g.user[3], ykiho, ykiho))
+
             db.commit()
             cursor.close()
 
             return "데이터가 성공적으로 업데이트되었습니다"
-
     except Exception as e:
         print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
         return "데이터 저장 중 오류가 발생했습니다"
