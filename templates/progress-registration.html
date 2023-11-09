@@ -204,6 +204,12 @@
                                 </td>
                               </tr>
                               <tr>
+                                <td>등록일자:</td>
+                                <td>
+                                    <input type="date" name="registration_date" id="registrationDateInput">
+                                </td>
+                            </tr>
+                              <tr>
                                 <td>내용 :</td>
                                 <td>
                                   <textarea name="content" id="contentTextarea" rows="2" cols="20"></textarea>
@@ -229,20 +235,16 @@
                                         </tr>
                                     </thead>
                                     <tbody id="hospitalTableBody">
-                                   {% for obj in hospital %}
-                                    <tr data-hospital-id="{{ generate_unique_id() }}">
-                                        <td>
-                                            <input type="date" name="registration_date" class="registrationDateInput" data-ykiho="{{ obj[5] }}" value="{{ obj[0] }}">
-                                            <button class="save-button btn btn-primary btn-user" style="font-size: 13px; padding: 5px 10px; background-color: #CFE2FF; color: black; font-weight: bold;" onmouseover="this.style.backgroundColor='#BACBE6';" onmouseout="this.style.backgroundColor='#CFE2FF';">
-                                                저장</button>
-                                        </td><!--등록일자-->
-                                        <td>{{ obj[1] }}</td>                                                      <!--등급-->
-                                        <td>{{ obj[2] }}</td>                                                      <!--병원명-->
-                                        <td>{{ obj[3] }}</td>                                                      <!--원장-->
-                                        <td>{{ obj[4] }}</td>                                                      <!--내용-->
-                                        <td class="hidden-col">{{ obj[5] }}</td>                                   <!--요양기호-->
-                                    </tr>
-                                    {% endfor %}
+                                        {% for obj in hospital %}
+                                        <tr data-hospital-id="{{ generate_unique_id() }}">
+                                            <td>{{ obj[0] }}</td> <!-- 등록일자 -->
+                                            <td>{{ obj[1] }}</td> <!-- 등급 -->
+                                            <td>{{ obj[2] }}</td> <!-- 병원명 -->
+                                            <td>{{ obj[3] }}</td> <!-- 원장 -->
+                                            <td>{{ obj[4] }}</td> <!-- 내용 -->
+                                            <td class="hidden-col">{{ obj[5] }}</td> <!-- 요양기호 -->
+                                        </tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
@@ -373,15 +375,19 @@ document.getElementById("saveButton").addEventListener("click", function () {
     const hospitalName = document.getElementById("hospitalSearch").value;
     const grade = document.getElementById("gradeSelect").value;
     const content = document.getElementById("contentTextarea").value;
+    const registration_date = document.getElementById("registrationDateInput").value;
+    
 
     console.log("hospitalName:", hospitalName);
     console.log("grade:", grade);
     console.log("content:", content);
+    console.log("registration_date:", registration_date);
 
     const form = new FormData();
     form.append("hospitalName", hospitalName);
     form.append("grade", grade);
     form.append("content", content);
+    form.append("registration_date", registration_date);
 
     fetch('/save_data', {
         method: 'POST',
@@ -434,7 +440,6 @@ var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(
                         event.preventDefault();
                         hospitalSearchInput.value = result;
                         hospitalSearchResults.style.display = "none";
-                        // Place the selected hospital at the top of the table
                         moveHospitalToTop(result);
                     });
                     hospitalSearchResults.appendChild(resultItem);
@@ -462,30 +467,6 @@ var hospitalNames = Array.from(document.querySelectorAll('.hospital-name')).map(
             }
         }
 
-//등록일자
-$(document).ready(function () {
-    $(document).on('click', '.save-button', function () {
-        var row = $(this).closest('tr');
-        var selectedDate = row.find('.registrationDateInput').val();
-        var selectedYkiho = row.find('.registrationDateInput').data('ykiho');
-
-        $.ajax({
-            url: '/update_registration_date',
-            type: 'POST',
-            data: {
-                registration_date: selectedDate,
-                ykiho: selectedYkiho
-            },
-            success: function (response) {
-                console.log(response.message);
-                alert(response.message);
-            },
-            error: function (error) {
-                console.error("에러:", error);
-            }
-        });
-    });
-});
 
 </script>
 
