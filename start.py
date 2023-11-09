@@ -287,9 +287,10 @@ def save_data_route():
     hospitalName = request.form.get('hospitalName')
     grade = request.form.get('grade')
     content = request.form.get('content')
+    registration_date = request.form.get('registration_date')  
     
     try:
-        result = save_data(hospitalName, grade, content)
+        result = save_data(hospitalName, grade, content, registration_date)
         if result == "데이터가 성공적으로 업데이트되었습니다":
             return jsonify({"message": result})
         else:
@@ -305,23 +306,6 @@ def fetch_hospital_data_from_db():
         hospital_data = cursor.fetchall()
     return hospital_data
 
-
-@app.route('/update_registration_date', methods=['POST'])
-def update_registration_date():
-    selected_date = request.form.get('registration_date')
-    selected_ykiho = request.form.get('ykiho')
-
-    try:
-        with db.cursor() as cursor:
-            update_sql = "UPDATE hospital_Detail SET recent_Visiting = %s WHERE ykiho = %s"
-            cursor.execute(update_sql, (selected_date, selected_ykiho))
-            db.commit()
-            return jsonify({"message": "날짜가 성공적으로 저장되었습니다"})
-    except pymysql.Error as e:
-        db.rollback()
-        return jsonify({"error": f"데이터베이스 오류: {str(e)}"})
-    except Exception as e:
-        return jsonify({"error": f"서버 오류: {str(e)}"})
 
 if __name__ == '__main__':
     schedule_task()
