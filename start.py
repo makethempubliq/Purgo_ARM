@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm
-from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data,getU_inform
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -33,6 +33,7 @@ def scheduled_task():
                          passwd='purgo1234', db='purgo_ARM_DB', charset='utf8')
 
     cursor = db.cursor()
+    cursor.execute("set innodb_lock_wait_timeout= 28800;")
     clCD = ['01', '11', '41', '51']
     for i in clCD:
         url1 = f'https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList?ServiceKey=pxp83Ms51yvx5MQYAGnfLSJndXx1bi0W1j6n8ul13Ty%2FoDJK3tzJJnpK6Q1ProOguWEpr9c6igNbZnefE8qnbg%3D%3D&numOfRows=100000&clCd={i}'
@@ -120,7 +121,7 @@ def master_information():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-information.html')
+        return render_template('master-information.html', ur_master = getU_inform())
 
 @app.route('/hospital-information.html')
 def hospital_information():
