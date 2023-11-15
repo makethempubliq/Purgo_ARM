@@ -304,6 +304,16 @@ def getPD_inform(): #전공 마스터 정보 불러오기 함수
 
     #print(data_list)
     return data_list
+def getU_inform():
+    sql_u = "select * from master_User"
+    cursor.execute(sql_u)
+    data = cursor.fetchall()
+    data_list = []
+    for obj in data:
+        data_list.append(obj)
+
+    #print(data_list)
+    return data_list
 
 def master_update(name, pagdesc):
     try:
