@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 from jinja2 import Environment
 
-from loginregister import UserCreateForm, UserLoginForm
+from loginregister import UserCreateForm, UserLoginForm, ResetPasswordForm, ChangePasswordForm
 from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data,getU_inform
 
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +13,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import bs4
 import requests
+from flask_mail import Mail, Message
 
 import config
 
@@ -27,6 +28,15 @@ db = pymysql.connect(
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
 app.config.from_object(config)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'action_123@hufs.ac.kr'
+app.config['MAIL_PASSWORD'] = '9597okokok.'
+
+mail = Mail(app)
 
 def scheduled_task():
     db = pymysql.connect(host='purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com', user='armteam',
@@ -185,9 +195,59 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-@app.route('/forgot-password.html')
+@app.route('/forgot-password.html', methods=('GET', 'POST'))
 def forgot_password():
-    return render_template('forgot-password.html')
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        cursor = db.cursor()
+        cursor.execute(f"select * from master_User where user_Email = \'{form.email.data}\'")
+        user = cursor.fetchone()
+        if user:
+            # Generate and send a reset password email
+            send_reset_password_email(email)
+            flash('Password reset email sent. Check your inbox.')
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid email address.')
+    return render_template('forgot-password.html', form=form)
+
+def send_reset_password_email(email):
+    # Generate a temporary password (you may want to use a secure method)
+    temp_password = 'temporary-password'
+    tempPW = generate_password_hash(temp_password)
+    cursor = db.cursor()
+    cursor.execute(f"UPDATE master_User SET user_Password = \'{tempPW}\' WHERE user_Email = \'{email}\'")
+    cursor.close()
+    db.commit()
+    # Send the reset password email
+    msg = Message('Password Reset', sender='action_123@hufs.ac.kr', recipients=[email])
+    msg.body = f'Your temporary password is: {temp_password}\nPlease reset your password after logging in.'
+    mail.send(msg)
+
+@app.route('/change-password.html', methods=('GET', 'POST'))
+def change_Password():
+    form = ChangePasswordForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        error = None
+        cursor = db.cursor()
+        cursor.execute(f"select user_Email from master_User where user_Email = \'{form.email.data}\'")
+        user = cursor.fetchone()
+        cursor.execute(f"select user_Password from master_User where user_Email = \'{form.email.data}\'")
+        pw = cursor.fetchone()
+        cursor.close()
+        if not user:
+            error = "존재하지 않는 사용자입니다."
+        elif not check_password_hash(pw[0], form.password.data):
+            error = "비밀번호가 올바르지 않습니다."
+        if error is None:
+            newPassword = generate_password_hash(form.newpassword.data)
+            cursor = db.cursor()
+            cursor.execute(f"UPDATE master_User SET user_Password = \'{newPassword}\' WHERE user_Email = \'{form.email.data}\'")
+            cursor.close()
+            db.commit()
+            return redirect(url_for('login'))
+    return render_template('change-password.html', form=form)
 
 @app.route('/register.html', methods=('GET', 'POST'))
 def register():
