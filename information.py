@@ -339,7 +339,6 @@ def master_update(name, pagdesc):
                 cursor.connection.commit()
                 cursor.close()
 
-                print("엘스")
                 return ("해당 학교가 등록되었습니다.")
             
         if(pagdesc == 'major'): #전공 마스터
@@ -424,8 +423,8 @@ def master_update(name, pagdesc):
             
     except Exception as e:
         print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
-        return ({"error": "데이터 저장 중 오류가 발생했습니다: "})       
-
+        return ({"error": "데이터 저장 중 오류가 발생했습니다: "})      
+    
 def Hinform_Upadate():
     sql2 = "select * from hospital_Detail where ykiho = "
     cursor.execute(sql2)
@@ -438,6 +437,16 @@ def Hinform_Upadate():
     #cursor.close()
     return data_list
 
+def mn_Update(data_list):
+    cursor = db.cursor()
+    for i in range(0,len(data_list)):
+        sql_mn = "UPDATE master_User SET user_Rank = %s, user_Use = %s WHERE user_Name = %s"
+        cursor.execute(sql_mn, (data_list[i][1],data_list[i][2],data_list[i][0]))
+        db.commit()
+        print(data_list[i][0])
+        print(data_list[i][1])
+        print(data_list[i][2])
+    return None
 
 def get_ykiho_from_hospital_name(hospital_name):
     cursor = db.cursor()
