@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g
 import pymysql
+import json
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm, ResetPasswordForm, ChangePasswordForm
-from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data,getU_inform
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data,getU_inform,mn_Update
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -191,7 +192,7 @@ def manager_function():
         return redirect(url_for('login'))
     else:
         if g.user[5] == '관리자':
-            return render_template('manager-function.html')
+            return render_template('manager-function.html', mnfunc = getU_inform())
         else :
             flash("권한이 없습니다.")
             return redirect(url_for('index'))
@@ -325,6 +326,22 @@ def popup_update():
     p_update(data)
     return redirect(url_for('popup_function'))
 
+@app.route('/save_data_mn', methods=['POST'])
+def save_data_nm():
+    print("여긴 nm 테스트")
+    # HTML에서 전송된 데이터를 받아옴
+    data_list_json = request.form.get('dataList')
+    
+    # JSON 형식의 데이터를 파이썬 리스트로 변환
+    data_list = json.loads(data_list_json)
+    
+    # 여기서 data_list를 사용하여 필요한 작업 수행
+    print("받은 데이터:", data_list)
+    
+    # 예를 들어 데이터를 데이터베이스에 저장하거나 다른 처리를 할 수 있습니다.
+    mn_Update(data_list)
+
+    return redirect(url_for('manager_function'))
 
 
 @app.route('/popup')
