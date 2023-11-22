@@ -14,7 +14,7 @@ from apscheduler.triggers.cron import CronTrigger
 import bs4
 import requests
 from flask_mail import Mail, Message
-
+from datetime import datetime, timedelta
 import config
 
 
@@ -38,7 +38,7 @@ app.config['MAIL_PASSWORD'] = '9597okokok.'
 
 mail = Mail(app)
 
-def scheduled_task():
+def daily_API():
     db = pymysql.connect(host='purgoarmdb.cqqwfl3a6ugn.ap-northeast-2.rds.amazonaws.com', user='armteam',
                          passwd='purgo1234', db='purgo_ARM_DB', charset='utf8')
 
@@ -47,10 +47,13 @@ def scheduled_task():
     clCD = ['01', '11', '41', '51']
     for i in clCD:
         url1 = f'https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList?ServiceKey=pxp83Ms51yvx5MQYAGnfLSJndXx1bi0W1j6n8ul13Ty%2FoDJK3tzJJnpK6Q1ProOguWEpr9c6igNbZnefE8qnbg%3D%3D&numOfRows=100000&clCd={i}'
-        response = requests.get(url1)
+
+        response = requests.get(url1, verify=False)
+
         content = response.text
         xml_obj = bs4.BeautifulSoup(content, 'lxml-xml')
         rows = xml_obj.findAll('item')
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         # xml 안의 데이터 수집
         for i in range(0, len(rows)):
             columns = rows[i].find_all()
@@ -73,11 +76,35 @@ def scheduled_task():
     db.commit()
     print("Scheduled task executed!")
 
+
+def send_Email():
+    with app.app_context():
+        cursor = db.cursor()
+        cursor.execute("select hospital_manager, recent_Visiting, yadmNm from hospital_Detail as d inner join Hospital as h where d.ykiho = h.ykiho and hospital_manager is not null")
+        list = cursor.fetchall()
+
+        for obj in list:
+            if obj[1] == (datetime.today()-timedelta(90)).strftime("%Y-%m-%d"):
+                email = obj[0]
+                msg = Message('담당 병원 재방문 요망', sender='action_123@hufs.ac.kr', recipients=[email])
+                msg.body = f'{obj[2]}의 최근 방문일로부터 90일 경과되었습니다.'
+                mail.send(msg)
+    print("Scheduled task executed!")
+
+
+
 # APScheduler를 설정하여 매일 정각에 scheduled_task 함수를 실행합니다
 def schedule_task():
     scheduler = BackgroundScheduler()
-    trigger = CronTrigger(hour=0, minute=0, second=0)  # 매일 00:00:00에 실행
-    scheduler.add_job(scheduled_task, trigger=trigger)
+
+    # daily_API 작업 추가
+    trigger_daily_api = CronTrigger(hour=0, minute=0, second=0)
+    #scheduler.add_job(daily_API, trigger=trigger_daily_api)
+
+    # send_Email 작업 추가
+    trigger_send_email = CronTrigger(hour=0, minute=30, second=0)
+    scheduler.add_job(send_Email, trigger=trigger_send_email)
+
     scheduler.start()
 
 @app.route('/')
