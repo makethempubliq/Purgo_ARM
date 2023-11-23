@@ -118,7 +118,12 @@ def master_school():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-school.html', sm_master=getSMinform())
+        if g.user[6] == 'Y' :
+            return render_template('master-school.html', sm_master=getSMinform())
+        else :
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
+
 
     
 @app.route('/master-major.html')
@@ -127,7 +132,11 @@ def master_major():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-major.html', mj_master = getMJ_inform())
+        if g.user[6] == 'Y':
+            return render_template('master-major.html', mj_master = getMJ_inform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/master-grade.html')
 def master_grade():
@@ -135,7 +144,11 @@ def master_grade():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-grade.html', rk_master = getRK_inform())
+        if g.user[6] == 'Y':
+            return render_template('master-grade.html', rk_master = getRK_inform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/master-competition.html')
 def master_competition():
@@ -143,7 +156,11 @@ def master_competition():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-competition.html', cp_master = getCP_inform())
+        if g.user[6] == 'Y':
+            return render_template('master-competition.html', cp_master = getCP_inform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/master-product.html')
 def master_product():
@@ -151,7 +168,11 @@ def master_product():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-product.html', pd_master = getPD_inform())
+        if g.user[6] == 'Y':
+            return render_template('master-product.html', pd_master = getPD_inform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/master-information.html')
 def master_information():
@@ -159,7 +180,11 @@ def master_information():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('master-information.html', ur_master = getU_inform())
+        if g.user[6] == 'Y':
+            return render_template('master-information.html', ur_master = getU_inform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/hospital-information.html')
 def hospital_information():
@@ -167,7 +192,11 @@ def hospital_information():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('hospital-information.html',hospital = getinform())
+        if g.user[6] == 'Y':
+            return render_template('hospital-information.html',hospital = getinform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/progress-registration.html')
 def progress_registration():
@@ -175,7 +204,11 @@ def progress_registration():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('progress-registration.html',hospital = get_R_inform())
+        if g.user[6] == 'Y':
+            return render_template('progress-registration.html',hospital = get_R_inform())
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/progress-confirmation.html')
 def progress_confirmation():
@@ -183,7 +216,11 @@ def progress_confirmation():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else :
-        return render_template('progress-confirmation.html', progress = get_progress(g.user[3], g.user[5]))
+        if g.user[6] == 'Y':
+            return render_template('progress-confirmation.html', progress = get_progress(g.user[3], g.user[5]))
+        else:
+            flash("권한이 없습니다.")
+            return redirect(url_for('index'))
 
 @app.route('/manager-function.html')
 def manager_function():
@@ -191,7 +228,7 @@ def manager_function():
         flash("로그인이 필요한 기능입니다.")
         return redirect(url_for('login'))
     else:
-        if g.user[5] == '관리자':
+        if g.user[5] == '관리자' and g.user[6] == 'Y':
             return render_template('manager-function.html', mnfunc = getU_inform())
         else :
             flash("권한이 없습니다.")
@@ -379,7 +416,7 @@ def save_data_sm():
 def get_Log_inform(): #로그 불러오기
     cursor = db.cursor()
     ykiho = request.form.get('ykiho')
-    sql_log = "select meeting_Date, hospital_Rank, meeting_Detail from meeting_Log where ykiho = %s"
+    sql_log = "select meeting_Date, hospital_Rank, meeting_Detail from meeting_Log where ykiho = %s order by meeting_Date desc"
     cursor.execute(sql_log, (ykiho, ))
     data = cursor.fetchall()
     data_list = []

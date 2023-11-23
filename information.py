@@ -51,7 +51,7 @@ def masters_init(): #masters 객체를 생성한 후 마스터테이블 값을 �
     sql5 = "select director_College from hospital_Detail where ykiho = " + code       #대학(불러오기)
     sql6 = "select director_Major from hospital_Detail where ykiho = " + code         #전공(불러오기)
     sql7 = "select director_GraduateYear from hospital_Detail where ykiho = " + code  #졸업년도(불러오기)
-    sql8 = "select hospital_manager from hospital_Detail where ykiho = " + code       #담당자(불러오기)
+    sql8 = "select hospital_manager, user_Name from hospital_Detail inner join master_User on user_Email = hospital_manager where ykiho = " + code       #담당자(불러오기)
     sql9 = "select hospital_Product from hospital_Detail where ykiho = " + code       #제품(불러오기)
     sql10= "select hospital_competitor from hospital_Detail where ykiho = " + code    #경쟁업체(불러오기)
     mang_s= "select * from master_User"
@@ -199,12 +199,13 @@ def get_R_inform():
 
 
 def get_hospital_names():
-    cursor.execute(sql1)
+    cursor.execute("select yadmNm, ykiho from Hospital")
     data = cursor.fetchall()
 
     # 병원명만 추출하여 리스트로 저장
-    hospital_names = [obj[0] for obj in data]
-
+    #hospital_names = [obj[0] for obj in data]
+    hospital_names = data
+    print(data)
     return hospital_names
 
 def get_progress(email, rank):
@@ -463,12 +464,12 @@ def get_ykiho_from_hospital_name(hospital_name):
 
 def save_data(hospitalName, grade, content, registration_date):
     try:
-        hospital_name = request.form.get('hospitalName')
+        #hospital_name = request.form.get('hospitalName')
         grade = request.form.get('grade')
         content = request.form.get('content')
         registration_date = request.form.get('registration_date')  
         
-        ykiho = get_ykiho_from_hospital_name(hospitalName)
+        ykiho = request.form.get('hospitalName')#get_ykiho_from_hospital_name(hospitalName)
 
         if ykiho:
             update_query = "UPDATE hospital_Detail SET hospital_Rank = %s, meeting_Detail = %s, recent_Visiting = %s, hospital_manager = %s WHERE ykiho = %s"
