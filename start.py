@@ -6,7 +6,7 @@ from werkzeug.utils import redirect
 from jinja2 import Environment
 
 from loginregister import UserCreateForm, UserLoginForm, ResetPasswordForm, ChangePasswordForm
-from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data,getU_inform,mn_Update
+from information import getinform, set_code, getPinform,get_R_inform, p_update,get_hospital_names,getSMinform,getMJ_inform,getRK_inform,getCP_inform,getPD_inform,master_update, get_progress,get_ykiho_from_hospital_name,save_data,getU_inform,mn_Update, get_grade_data
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -110,7 +110,9 @@ def schedule_task():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    hospital_data = get_grade_data()
+    return render_template('index.html', hospital=hospital_data)
+
 
 @app.route('/master-school.html')
 def master_school():
