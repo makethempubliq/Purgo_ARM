@@ -485,6 +485,27 @@ def save_data(hospitalName, grade, content, registration_date):
     except Exception as e:
         print(f"데이터 저장 또는 업데이트 중 오류 발생: {e}")
         return "데이터 저장 중 오류가 발생했습니다"
+    
+def get_grade_data():
+    grades = ['Act', 'Bestcase', 'Opportunity', 'Pipeline', 'Funnel']
+    grade_data = {}
+    try:
+        for grade in grades:
+
+                query = f"SELECT COUNT(*) FROM hospital_Detail WHERE hospital_Rank = '{grade}'"
+                cursor.execute(query)
+
+            
+                result = cursor.fetchone()
+                count = result[0] if result else 0
+
+            
+                grade_data[grade] = {'count': count}
+
+    except Exception as e:
+        print(f"에러 발생: {e}")
+    
+    return grade_data
 
 #17:33:42	update hospital_Detail set hospital_Director = '조석훈' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	1 row(s) affected Rows matched: 1  Changed: 1  Warnings: 0	0.015 sec
 #17:33:21	update hospital_Detail set hospital_Director = '조석훈', hospital_competitor = 'Allo-Oss' where ykiho = "JDQ4MTg4MSM1MSMkMSMkMCMkNzIkNTgxMzUxIzExIyQxIyQzIyQ3OSQzNjEwMDIjNjEjJDEjJDAjJDgz"	Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`purgo_ARM_DB`.`hospital_Detail`, CONSTRAINT `hospital_Detail_ibfk_6` FOREIGN KEY (`hospital_competitor`) REFERENCES `master_Competitor` (`competitor_Name`))	0.016 sec
