@@ -194,6 +194,20 @@
 
                 </nav>
 
+                <div class="card shadow mb-4" style="margin: 10px;">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">등급별 병원 수 Counting View</h6>
+                    </div>
+                    <div class="card-body">
+                        {% for grade, data in hospital.items() %}
+                            <h4 class="small font-weight-bold" style="margin-bottom: 10px;">{{ grade }} <span class="float-right">{{ data['count'] }}%</span></h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar {% if grade == 'Act' %}bg-danger{% elif grade == 'Bestcase' %}bg-warning{% elif grade == 'Opportunity' %}bg-info{% elif grade == 'Pipeline' %}bg-info{% elif grade == 'Funnel' %}bg-success{% endif %}" role="progressbar" style="width: {{ data['count'] }}%" aria-valuenow="{{ data['count'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <div class="container-fluid">
                     <div class="row">
 
@@ -232,6 +246,31 @@
     <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/purgobio.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+    <script>
+    var gradeData = [
+        { grade: 'Act', count: 20 },
+        { grade: 'Bestcase', count: 40 },
+        { grade: 'Opportunity', count: 60 },
+        { grade: 'Pipeline', count: 80 },
+        { grade: 'Funnel', count: 100 }
+    ];
+
+    // DOM 업데이트 함수
+    function updateDashboard() {
+        // 등급별 데이터를 반복하면서 DOM 업데이트
+        gradeData.forEach(function(data) {
+            var progressBar = document.querySelector(`.progress-bar.${data.grade}`);
+            var progressText = document.querySelector(`.small.${data.grade} span`);
+
+            // 등급에 해당하는 프로그레스바와 텍스트 업데이트
+            progressBar.style.width = `${data.count}%`;
+            progressText.textContent = `${data.count}%`;
+        });
+    }
+
+    // 초기 로드시 업데이트
+    updateDashboard();
+</script>
 </body>
 
 </html>
