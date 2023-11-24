@@ -83,10 +83,15 @@
                 <th>담당자</th>
                 <td>
                     <select id="responSelect" name="Manager">
-                        <option value="{{ P_hospital.sql8[0][0] }}">{{ P_hospital.sql8[0][1] }}</option>
-                    {% for obj in P_hospital.Manager %}
-                        <option value="{{ obj[3] }}">{{ obj[1] }}</option>
-                    {% endfor %}
+                        {% if P_hospital.sql8 and P_hospital.sql8|length > 0 %}
+                            <option value="{{ P_hospital.sql8[0][0] }}">{{ P_hospital.sql8[0][1] }}</option>
+                        {% else %}
+                            <option value="">None</option>
+                        {% endif %}
+                        
+                        {% for obj in P_hospital.Manager %}
+                            <option value="{{ obj[3] }}">{{ obj[1] }}</option>
+                        {% endfor %}
                     </select>
                 </td>
             </tr>
